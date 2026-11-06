@@ -65,6 +65,13 @@ under the License.
   </head>
 
   <body class="<%= page_classes %>" data-languages="<%=h language_tabs.map{ |lang| lang.is_a?(Hash) ? lang.keys.first : lang }.to_json %>">
+    <%# Top menu: every page that has a `menu_title` in its front matter, ordered by that title %>
+    <% api_docs = sitemap.resources.select { |r| r.data.menu_title }.sort_by { |r| r.data.menu_title } %>
+    <nav class="api-switcher" aria-label="API documentation">
+      <% api_docs.each do |doc| %>
+        <a href="<%= doc.destination_path %>"<%= ' class="active" aria-current="page"' if doc.path == current_page.path %>><%= doc.data.menu_title %></a>
+      <% end %>
+    </nav>
     <a href="#" id="nav-button">
       <span>
         NAV

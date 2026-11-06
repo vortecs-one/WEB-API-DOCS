@@ -37,6 +37,57 @@ html, body {
   -webkit-text-size-adjust: none; /* Never autoresize text */
 }
 
+// Anchor jumps (ToC clicks, #hash links, scrollIntoView) must land below the
+// fixed top menu instead of behind it.
+html {
+  scroll-padding-top: $topbar-height;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// API SWITCHER (top menu to move between the API documentations)
+////////////////////////////////////////////////////////////////////////////////
+
+.api-switcher {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200; // above the ToC (30), language tabs (50) and nav button (100)
+  box-sizing: border-box;
+  height: $topbar-height;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  background-color: $topbar-bg;
+  border-bottom: 1px solid $lang-select-border;
+  font-size: 13px;
+  font-weight: bold;
+
+  a {
+    display: flex;
+    align-items: center;
+    flex: none;
+    padding: 0 $nav-padding + 5px;
+    color: $topbar-text;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: background-color 130ms linear, color 130ms linear;
+
+    &:hover, &:focus {
+      color: $nav-text;
+      background-color: $topbar-hover-bg;
+      outline: 0;
+    }
+
+    &.active {
+      color: $topbar-active-text;
+      background-color: $topbar-active-bg;
+      border-bottom-color: $nav-active-bg;
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // TABLE OF CONTENTS
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +106,7 @@ html, body {
   overflow-x: hidden;
   position: fixed;
   z-index: 30;
-  top: 0;
+  top: $topbar-height;
   left: 0;
   bottom: 0;
   width: $nav-width;
@@ -255,6 +306,7 @@ html, body {
   background-color: $main-bg;
   min-height: 100%;
 
+  padding-top: $topbar-height; // room for the fixed top menu
   padding-bottom: 1px; // prevent margin overflow
 
   // The dark box is what gives the code samples their dark background.
@@ -273,6 +325,7 @@ html, body {
 
   .lang-selector {
     position: fixed;
+    top: $topbar-height;
     z-index: 50;
     border-bottom: 5px solid $lang-select-active-bg;
   }
@@ -577,6 +630,7 @@ html, body {
 
   #nav-button {
     display: block;
+    top: $topbar-height;
   }
 
   .toc-link {

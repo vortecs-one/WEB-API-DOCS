@@ -1,6 +1,9 @@
 ---
 title: Thruxion API 
 
+# Label shown in the top menu that switches between the API docs
+menu_title: Communications API
+
 language_tabs: # must be one of https://github.com/rouge-ruby/rouge/wiki/List-of-supported-languages-and-lexers
   - shell
   - ruby
@@ -8,7 +11,6 @@ language_tabs: # must be one of https://github.com/rouge-ruby/rouge/wiki/List-of
   - javascript
 
 toc_footers:
-  - <a href='humans.html'>Humans API</a>
   - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
 
 includes:
