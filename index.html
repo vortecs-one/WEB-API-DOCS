@@ -1,0 +1,1068 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta
+            name="description"
+            content="Documentation for the Communication API"
+        >
+    <title>Thruxion API</title>
+
+    <style media="screen">
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cpf {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s, .highlight .sa, .highlight .dl {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf, .highlight .fm {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv, .highlight .vm {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #f92672;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <style media="print">
+      * {
+        -webkit-transition:none!important;
+        transition:none!important;
+      }
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight, .highlight .w {
+  color: #586e75;
+}
+.highlight .err {
+  color: #002b36;
+  background-color: #dc322f;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cm, .highlight .cpf, .highlight .c1, .highlight .cs {
+  color: #657b83;
+}
+.highlight .cp {
+  color: #b58900;
+}
+.highlight .nt {
+  color: #b58900;
+}
+.highlight .o, .highlight .ow {
+  color: #93a1a1;
+}
+.highlight .p, .highlight .pi {
+  color: #93a1a1;
+}
+.highlight .gi {
+  color: #859900;
+}
+.highlight .gd {
+  color: #dc322f;
+}
+.highlight .gh {
+  color: #268bd2;
+  background-color: #002b36;
+  font-weight: bold;
+}
+.highlight .k, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv {
+  color: #6c71c4;
+}
+.highlight .kc {
+  color: #cb4b16;
+}
+.highlight .kt {
+  color: #cb4b16;
+}
+.highlight .kd {
+  color: #cb4b16;
+}
+.highlight .s, .highlight .sb, .highlight .sc, .highlight .dl, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 {
+  color: #859900;
+}
+.highlight .sa {
+  color: #6c71c4;
+}
+.highlight .sr {
+  color: #2aa198;
+}
+.highlight .si {
+  color: #d33682;
+}
+.highlight .se {
+  color: #d33682;
+}
+.highlight .nn {
+  color: #b58900;
+}
+.highlight .nc {
+  color: #b58900;
+}
+.highlight .no {
+  color: #b58900;
+}
+.highlight .na {
+  color: #268bd2;
+}
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mx {
+  color: #859900;
+}
+.highlight .ss {
+  color: #859900;
+}
+    </style>
+    <link href="stylesheets/screen-9c19b03a.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print-966d6edc.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all-024da600.js"></script>
+
+    <script>
+      $(function() { setupCodeCopy(); });
+    </script>
+  </head>
+
+  <body class="index" data-languages="[&quot;shell&quot;,&quot;ruby&quot;,&quot;python&quot;,&quot;javascript&quot;]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar-cad8cdcb.png" alt="" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+      <img src="images/logo-09624c23.png" class="logo" alt="" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="shell">shell</a>
+              <a href="#" data-language-name="ruby">ruby</a>
+              <a href="#" data-language-name="python">python</a>
+              <a href="#" data-language-name="javascript">javascript</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <ul id="toc" class="toc-list-h1">
+          <li>
+            <a href="#thruxion-communication-api" class="toc-h1 toc-link" data-title="Thruxion - Communication API">Thruxion - Communication API</a>
+          </li>
+          <li>
+            <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#http-request" class="toc-h2 toc-link" data-title="HTTP Request">HTTP Request</a>
+                  </li>
+                  <li>
+                    <a href="#url-parameters" class="toc-h2 toc-link" data-title="URL Parameters">URL Parameters</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#communications-crud" class="toc-h1 toc-link" data-title="Communications CRUD">Communications CRUD</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#create-communication" class="toc-h2 toc-link" data-title="Create Communication">Create Communication</a>
+                  </li>
+                  <li>
+                    <a href="#read-all-communications" class="toc-h2 toc-link" data-title="Read All Communications">Read All Communications</a>
+                  </li>
+                  <li>
+                    <a href="#read-communication-by-id" class="toc-h2 toc-link" data-title="Read Communication by ID">Read Communication by ID</a>
+                  </li>
+                  <li>
+                    <a href="#update-communication" class="toc-h2 toc-link" data-title="Update Communication">Update Communication</a>
+                  </li>
+                  <li>
+                    <a href="#delete-communication" class="toc-h2 toc-link" data-title="Delete Communication">Delete Communication</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
+          </li>
+      </ul>
+        <ul class="toc-footer">
+            <li><a href='humans.html'>Humans API</a></li>
+            <li><a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='thruxion-communication-api'>Thruxion - Communication API</h1>
+<p>API URL: https://thruxion.com/api/communications/</p>
+
+<p>Communication API allows to register all kind of messages between senders and receivers (humans and/or machines). The channel is the platform where the message travel to its destiny if a noise is registered it can be add to the log. the code is about the language of the message and it can be asociated to senses. It&#39;s possible to register the date and time or the geo-location of the messages but it&#39;s optional.</p>
+
+<p><img src="images/c-model-05e4d6b5.jpg" alt="Communication Diagram" /></p>
+
+<p>The documenatation has a beta programming languages implementation of the API. currently it&#39;s possible to choose between Shell, Ruby, Python and JavaScript. </p>
+<h1 id='authentication'>Authentication</h1>
+<blockquote>
+<p>To authorize, use this code:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://thruxion.com/api/communications/auth/system-login'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">username: </span><span class="s1">'admin'</span><span class="p">,</span> <span class="ss">password: </span><span class="s1">'yourpassword'</span> <span class="p">}.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/auth/system-login"</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">"username"</span><span class="p">:</span> <span class="s">"admin"</span><span class="p">,</span> <span class="s">"password"</span><span class="p">:</span> <span class="s">"yourpassword"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints the token response
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://thruxion.com/api/communications/auth/system-login"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{"username": "admin", "password": "yourpassword"}'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">login</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://thruxion.com/api/communications/auth/system-login</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">username</span><span class="p">:</span> <span class="dl">'</span><span class="s1">admin</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">password</span><span class="p">:</span> <span class="dl">'</span><span class="s1">yourpassword</span><span class="dl">'</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>  <span class="c1">// Prints the token response</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">login</span><span class="p">();</span>
+</code></pre></div>
+<blockquote>
+<p>Make sure to replace with your own API credentials.</p>
+</blockquote>
+
+<p>The API uses JSON Web Tokens (JWT) for stateless authentication. Users authenticate by logging in with their username and password. Upon successful authentication, a JWT token is generated and returned. This token must then be included in the Authorization header of subsequent requests to access protected endpoints.</p>
+
+<p>The authentication process involves two steps:</p>
+
+<ol>
+<li><p>Login: Submit your username and password to the /api/login endpoint to receive a JWT token
+<code>{
+   &quot;username&quot;: &quot;valid-provided-user&quot;,
+   &quot;password&quot;: &quot;valid-provided-pass&quot;
+}</code></p></li>
+<li><p>Authenticated Requests: Include the JWT token in the Authorization header as Bearer <your-token> for access to protected routes        <code>{
+   &quot;token&quot;: &quot;eyJhbGcIU...I7MzBQ&quot;
+}</code></p></li>
+</ol>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code>POST https://thruxion.com/api/communications/auth/system-login</code></p>
+<h3 id='url-parameters'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>user</td>
+<td>string</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+The generated <code>token</code> it will expire after 1 hour 
+</aside>
+<h1 id='communications-crud'>Communications CRUD</h1><h2 id='create-communication'>Create Communication</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+<span class="nb">require</span> <span class="s1">'uri'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/communications/create"</span><span class="p">)</span>  
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+
+<span class="c1"># Example data to send</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="ss">sender: </span><span class="s1">'sender_name'</span><span class="p">,</span>
+  <span class="ss">receiver: </span><span class="s1">'receiver_name'</span><span class="p">,</span>
+  <span class="ss">message: </span><span class="s1">'Hello, this is a test message'</span><span class="p">,</span>
+  <span class="ss">channel: </span><span class="s1">'written'</span><span class="p">,</span>
+  <span class="ss">noise: </span><span class="s1">'poor internet connection'</span><span class="p">,</span>
+  <span class="ss">code: </span><span class="s1">'english'</span><span class="p">,</span>
+  <span class="ss">feedback: </span><span class="s1">'delivered'</span><span class="p">,</span>
+  <span class="ss">sense: </span><span class="s1">'eyes'</span><span class="p">,</span>
+  <span class="ss">longitude: </span><span class="s1">'123.4567'</span><span class="p">,</span>
+  <span class="ss">latitude: </span><span class="s1">'-123.4567'</span><span class="p">,</span>
+  <span class="ss">date_time: </span><span class="s1">'2025-01-01 00:00:00'</span><span class="p">,</span>
+  <span class="ss">file_path: </span><span class="s1">'path/to/file/example.jpeg'</span><span class="p">,</span>
+  <span class="ss">file: </span><span class="s1">'example.jpeg'</span>
+<span class="p">}</span>
+
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/create"</span>  
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">,</span> <span class="s">"Content-Type"</span><span class="p">:</span> <span class="s">"application/json"</span><span class="p">}</span>
+
+<span class="c1"># Example data to send
+</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"sender"</span><span class="p">:</span> <span class="s">"sender_name"</span><span class="p">,</span>
+    <span class="s">"receiver"</span><span class="p">:</span> <span class="s">"receiver_name"</span><span class="p">,</span>
+    <span class="s">"message"</span><span class="p">:</span> <span class="s">"Hello, this is a test message"</span><span class="p">,</span>
+    <span class="s">"channel"</span><span class="p">:</span> <span class="s">"email"</span><span class="p">,</span>
+    <span class="s">"noise"</span><span class="p">:</span> <span class="s">"poor internet connection"</span><span class="p">,</span>
+    <span class="s">"code"</span><span class="p">:</span> <span class="s">"english"</span><span class="p">,</span>
+    <span class="s">"feedback"</span><span class="p">:</span> <span class="s">"delivered"</span><span class="p">,</span>
+    <span class="s">"sense"</span><span class="p">:</span> <span class="s">"eyes"</span><span class="p">,</span>
+    <span class="s">"longitude"</span><span class="p">:</span> <span class="s">'123.4567'</span><span class="p">,</span>
+    <span class="s">"latitude"</span><span class="p">:</span> <span class="s">'-123.4567'</span><span class="p">,</span>
+    <span class="s">"date_time"</span><span class="p">:</span> <span class="s">'2025-01-01 00:00:00'</span><span class="p">,</span>
+    <span class="s">"file_path"</span><span class="p">:</span> <span class="s">'path/to/file/example.jpeg'</span><span class="p">,</span>
+    <span class="s">"file"</span><span class="p">:</span> <span class="s">'example.jpeg'</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints the response message
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://thruxion.com/api/communications/create"</span> <span class="se">\ </span> 
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+        "sender": "sender_name",
+        "receiver": "receiver_name",
+        "message": "Hello, this is a test message",
+        "channel": "email",
+        "noise": "poor internet connection",
+        "code": "english",
+        "feedback": "delivered",
+        "sense": "eyes",
+        "longitude": '</span>123.4567<span class="s1">',
+        "latitude": '</span><span class="nt">-123</span>.4567<span class="s1">',
+        "date_time": '</span>2025-01-01 00:00:00<span class="s1">',
+        "file_path": '</span>path/to/file/example.jpeg<span class="s1">',
+        "file": '</span>example.jpeg<span class="s1">'
+      }'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">addCommunication</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://thruxion.com/api/communications/create</span><span class="dl">'</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>  <span class="c1">// Prints the response message</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Example data to send</span>
+<span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">sender</span><span class="p">:</span> <span class="dl">'</span><span class="s1">sender_name</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">receiver</span><span class="p">:</span> <span class="dl">'</span><span class="s1">receiver_name</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">message</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Hello, this is a test message</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">channel</span><span class="p">:</span> <span class="dl">'</span><span class="s1">email</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">noise</span><span class="p">:</span> <span class="dl">'</span><span class="s1">poor internet connection</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">code</span><span class="p">:</span> <span class="dl">'</span><span class="s1">english</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">feedback</span><span class="p">:</span> <span class="dl">'</span><span class="s1">delivered</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">sense</span><span class="p">:</span> <span class="dl">'</span><span class="s1">eyes</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">longitude</span><span class="p">:</span> <span class="dl">'</span><span class="s1">123.4567</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">latitude</span><span class="p">:</span> <span class="dl">'</span><span class="s1">-123.4567</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">date_time</span><span class="p">:</span> <span class="dl">'</span><span class="s1">2025-01-01 00:00:00</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">file_path</span><span class="p">:</span> <span class="dl">'</span><span class="s1">path/to/file/example.jpeg</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">file</span><span class="p">:</span> <span class="dl">'</span><span class="s1">example.jpeg</span><span class="dl">'</span>
+<span class="p">};</span>
+
+<span class="c1">// Replace 'YOUR_JWT_TOKEN' with the actual token</span>
+<span class="nx">addCommunication</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> 
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Communication record created successfully"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint add a new communication.</p>
+<h3 id='http-request-2'>HTTP Request</h3>
+<p><code>POST    https://thruxion.com/api/communications/create</code></p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>sender</td>
+<td>not null</td>
+<td>who send the message</td>
+</tr>
+<tr>
+<td>receiver</td>
+<td>not null</td>
+<td>who recieve the message</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>not null</td>
+<td>where the message travel</td>
+</tr>
+<tr>
+<td>noise</td>
+<td>null</td>
+<td>possible interferences</td>
+</tr>
+<tr>
+<td>code</td>
+<td>not null</td>
+<td>language of the message</td>
+</tr>
+<tr>
+<td>message</td>
+<td>not null</td>
+<td>element exhanged</td>
+</tr>
+<tr>
+<td>feedback</td>
+<td>not null</td>
+<td>response from the reciever</td>
+</tr>
+<tr>
+<td>sense</td>
+<td>null</td>
+<td>senses involve in the message</td>
+</tr>
+<tr>
+<td>longitude</td>
+<td>null</td>
+<td>geo-location (optional)</td>
+</tr>
+<tr>
+<td>latitude</td>
+<td>null</td>
+<td>geo-location (optional)</td>
+</tr>
+<tr>
+<td>date_time</td>
+<td>null</td>
+<td>when the message was sent</td>
+</tr>
+<tr>
+<td>file_path</td>
+<td>null</td>
+<td>filepath where the message file is stored</td>
+</tr>
+<tr>
+<td>file</td>
+<td>file</td>
+<td>New file to upload (optional)</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Remember — Include the JWT token in the Authorization header as Bearer.
+</aside>
+<h2 id='read-all-communications'>Read All Communications</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+<span class="nb">require</span> <span class="s1">'uri'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://thruxion.com/api/communications/get/all'</span><span class="p">)</span>  
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/get/all"</span>  
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints all communications
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://thruxion.com/api/communications/get/all"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">getAllCommunications</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://thruxion.com/api/communications/get/all</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>  <span class="c1">// Prints all communications</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Replace 'YOUR_JWT_TOKEN' with the actual token</span>
+<span class="nx">getAllCommunications</span><span class="p">(</span><span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UserA"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"receiver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UserB"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"channel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Email"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"noise"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spam"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Spanish"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello, how are you?"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"feedback"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sent"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sense"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Visual"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"date_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-02-13T12:00:00.000Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alice"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"receiver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bob"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"channel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Zoom"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"noise"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"English"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Meeting file"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"feedback"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Delivered"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sense"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Audiovisual"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"date_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-18T15:30:00.000Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/video/call.mp4"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint retrieves all communications.</p>
+<h3 id='http-request-3'>HTTP Request</h3>
+<p><code>GET https://thruxion.com/api/communications/get/all</code></p>
+
+<aside class="notice">
+Remember — Include the JWT token in the Authorization header as Bearer.
+</aside>
+<h2 id='read-communication-by-id'>Read Communication by ID</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+<span class="nb">require</span> <span class="s1">'uri'</span>
+
+<span class="n">communication_id</span> <span class="o">=</span> <span class="s1">'1'</span>  <span class="c1"># Replace with the ID of the communication you want to fetch</span>
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/communications/get/id/</span><span class="si">#{</span><span class="n">communication_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">communication_id</span> <span class="o">=</span> <span class="s">'1'</span>  <span class="c1"># Replace with the ID of the communication you want to fetch
+</span><span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://thruxion.com/api/communications/get/id/</span><span class="si">{</span><span class="n">communication_id</span><span class="si">}</span><span class="s">"</span>  
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints the communication record
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://thruxion.com/api/communications/get/id/1"</span> <span class="se">\ </span> <span class="c"># Replace '1' with the actual communication ID</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">getCommunicationById</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/communications/get/id/</span><span class="p">${</span><span class="nx">id</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>  <span class="c1">// Prints the communication record</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Replace '1' with the actual communication ID and 'YOUR_JWT_TOKEN' with the actual token</span>
+<span class="nx">getCommunicationById</span><span class="p">(</span><span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alice"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"receiver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bob"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"channel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Zoom"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"noise"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"English"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Meeting file"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"feedback"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Finished"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sense"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Audiovisual"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"date_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-18T15:30:00.000Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/video/call.mp4"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint retrieves a specific communication.</p>
+
+<!--<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>-->
+
+<!--<aside class="success">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>-->
+<h3 id='http-request-4'>HTTP Request</h3>
+<p><code>GET https://thruxion.com/api/communications/get/id/&lt;ID&gt;</code></p>
+<h3 id='parameters-2'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ID</td>
+<td>Communicaton ID</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Remember — Include the JWT token in the Authorization header as Bearer.
+</aside>
+<h2 id='update-communication'>Update Communication</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+<span class="nb">require</span> <span class="s1">'uri'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/communications/update/COMMUNICATION_ID"</span><span class="p">)</span>  
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Put</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+
+<span class="c1"># Example data to update</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">sender: </span><span class="s1">'sender_name'</span><span class="p">,</span>
+    <span class="ss">receiver: </span><span class="s1">'receiver_name'</span><span class="p">,</span>
+    <span class="ss">message: </span><span class="s1">'Hello, this is a test message'</span><span class="p">,</span>
+    <span class="ss">channel: </span><span class="s1">'written'</span><span class="p">,</span>
+    <span class="ss">noise: </span><span class="s1">'internet poor connection'</span><span class="p">,</span>
+    <span class="ss">code: </span><span class="s1">'english'</span><span class="p">,</span>
+    <span class="ss">feedback: </span><span class="s1">'delivered'</span><span class="p">,</span>
+    <span class="ss">sense: </span><span class="s1">'eyes'</span>
+<span class="p">}</span>
+
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/update/COMMUNICATION_ID"</span>  
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">,</span> <span class="s">"Content-Type"</span><span class="p">:</span> <span class="s">"application/json"</span><span class="p">}</span>
+
+<span class="c1"># Example data to update
+</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"sender"</span><span class="p">:</span> <span class="s">"updated_sender_name"</span><span class="p">,</span>
+    <span class="s">"receiver"</span><span class="p">:</span> <span class="s">"updated_receiver_name"</span><span class="p">,</span>
+    <span class="s">"message"</span><span class="p">:</span> <span class="s">"updated_message"</span><span class="p">,</span>
+    <span class="s">"channel"</span><span class="p">:</span> <span class="s">"email"</span><span class="p">,</span>
+    <span class="s">"noise"</span><span class="p">:</span> <span class="s">"internet poor connection"</span><span class="p">,</span>
+    <span class="s">"code"</span><span class="p">:</span> <span class="s">"english"</span><span class="p">,</span>
+    <span class="s">"feedback"</span><span class="p">:</span> <span class="s">"delivered"</span><span class="p">,</span>
+    <span class="s">"sense"</span><span class="p">:</span> <span class="s">"eyes"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints the response message
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> PUT <span class="s2">"https://thruxion.com/api/communications/update/COMMUNICATION_ID"</span> <span class="se">\ </span> 
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+        "sender": "updated_sender_name",
+        "receiver": "updated_receiver_name",
+        "message": "Updated message content",
+        "channel": "email",
+        "noise": "internet poor connection",
+        "code": "english",
+        "feedback": "delivered",
+        "sense": "eyes"
+      }'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">updateCommunication</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/communications/update/</span><span class="p">${</span><span class="nx">id</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>  <span class="c1">// Prints the response message</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Example data to update</span>
+<span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">sender</span><span class="p">:</span> <span class="dl">'</span><span class="s1">sender_name</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">receiver</span><span class="p">:</span> <span class="dl">'</span><span class="s1">receiver_name</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">message</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Hello, this is a test message</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">channel</span><span class="p">:</span> <span class="dl">'</span><span class="s1">written</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">noise</span><span class="p">:</span> <span class="dl">'</span><span class="s1">internet poor connection</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">code</span><span class="p">:</span> <span class="dl">'</span><span class="s1">english</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">feedback</span><span class="p">:</span> <span class="dl">'</span><span class="s1">delivered</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">sense</span><span class="p">:</span> <span class="dl">'</span><span class="s1">eyes</span><span class="dl">'</span>
+<span class="p">};</span>
+
+<span class="c1">// Replace 'COMMUNICATION_ID' with the actual communication ID and 'YOUR_JWT_TOKEN' with the token</span>
+<span class="nx">updateCommunication</span><span class="p">(</span><span class="dl">'</span><span class="s1">COMMUNICATION_ID</span><span class="dl">'</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Communication record updated successfully"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint update an existing communication.</p>
+<h3 id='http-request-5'>HTTP Request</h3>
+<p><code>PUT    https://thruxion.com/api/communications/update/&lt;ID&gt;</code></p>
+<h3 id='parameters-3'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>sender</td>
+<td>not null</td>
+<td>who send the message</td>
+</tr>
+<tr>
+<td>receiver</td>
+<td>not null</td>
+<td>who recieve the message</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>not null</td>
+<td>where the message travel</td>
+</tr>
+<tr>
+<td>noise</td>
+<td>null</td>
+<td>possible interferences</td>
+</tr>
+<tr>
+<td>code</td>
+<td>not null</td>
+<td>language of the message</td>
+</tr>
+<tr>
+<td>message</td>
+<td>not null</td>
+<td>element exhanged</td>
+</tr>
+<tr>
+<td>feedback</td>
+<td>not null</td>
+<td>response from the reciever</td>
+</tr>
+<tr>
+<td>sense</td>
+<td>null</td>
+<td>senses involve in the message</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Remember — Include the JWT token in the Authorization header as Bearer.
+</aside>
+<h2 id='delete-communication'>Delete Communication</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+<span class="nb">require</span> <span class="s1">'uri'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://thruxion.com/api/communications/delete/1'</span><span class="p">)</span>  <span class="c1"># Replace '1' with the ID of the record you want to delete</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Delete</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/delete/1"</span>  <span class="c1"># Replace '1' with the ID of the record you want to delete
+</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints the response after deletion
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> DELETE <span class="s2">"https://thruxion.com/api/communications/delete/1"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">deleteCommunication</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/communications/delete/</span><span class="p">${</span><span class="nx">id</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>  <span class="c1">// Prints the response after deletion</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Replace '1' with the ID and 'YOUR_JWT_TOKEN' with the actual token</span>
+<span class="nx">deleteCommunication</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Communication record deleted successfully"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint deletes a specific communication.</p>
+<h3 id='http-request-6'>HTTP Request</h3>
+<p><code>DELETE https://thruxion.com/api/communications/delete/&lt;ID&gt;</code></p>
+<h3 id='parameters-4'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ID</td>
+<td>Communication ID</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Remember — Include the JWT token in the Authorization header as Bearer.
+</aside>
+<h1 id='errors'>Errors</h1>
+<aside class="warning">
+This error section explains the frequent errors after a bad request to the API
+</aside>
+
+<p>The Communication API uses the following error codes:</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Bad Request -- Your request is invalid.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized -- Your API key is wrong.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found -- The specified kitten could not be found.</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed -- You tried to access a communication with an invalid method.</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone -- The communication requested has been removed from our servers.</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests -- You&#39;re requesting too many communications! Slow down!</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
+</tr>
+</tbody></table>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="shell">shell</a>
+                <a href="#" data-language-name="ruby">ruby</a>
+                <a href="#" data-language-name="python">python</a>
+                <a href="#" data-language-name="javascript">javascript</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
