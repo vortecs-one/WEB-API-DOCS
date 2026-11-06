@@ -33,8 +33,13 @@ body {
 
 // The logo lives in the top bar; keep it small on paper
 .topbar .logo {
-  width: auto;
+  width: $topbar-logo-height;
   height: $topbar-logo-height;
+}
+
+// The cream wordmark would be invisible on white paper
+.topbar .brand-name {
+  color: #333;
 }
 
 .tocify-wrapper>img {

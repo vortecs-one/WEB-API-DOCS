@@ -68,8 +68,12 @@ under the License.
     <%# Top bar: the logo plus a menu of every page that has a `menu_title` in its front matter, ordered by that title %>
     <% api_docs = sitemap.resources.select { |r| r.data.menu_title }.sort_by { |r| r.data.menu_title } %>
     <header class="topbar">
-      <%# logo-header.png is logo.png pre-scaled to 2x its display size: crisp on screen, ~20 KB instead of ~770 KB %>
-      <%= image_tag "logo-header.png", class: "logo", alt: "Thruxion", width: 198, height: 80 %>
+      <%# logo-mark.png is the round mark of logo.png pre-scaled to 2x its display size (crisp on screen, ~15 KB instead of ~770 KB); the wordmark is real text so it can be sized with CSS %>
+      <%# .brand is as wide as the side menu, so the tabs start exactly where the menu ends %>
+      <div class="brand">
+        <%= image_tag "logo-mark.png", class: "logo", alt: "", width: 80, height: 80 %>
+        <span class="brand-name">Thruxion</span>
+      </div>
       <nav class="api-switcher" aria-label="API documentation">
         <% api_docs.each do |doc| %>
           <a href="<%= doc.destination_path %>"<%= ' class="active" aria-current="page"' if doc.path == current_page.path %>><%= doc.data.menu_title %></a>

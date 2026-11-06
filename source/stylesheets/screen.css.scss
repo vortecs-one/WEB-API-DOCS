@@ -60,12 +60,32 @@ html {
   background-color: $topbar-bg;
   border-bottom: 1px solid $lang-select-border;
 
+  // Logo cell: same horizontal size as the side menu, so the tabs start where the menu ends
+  // (and line up with the content column) and the logo sits centred above the menu.
+  .brand {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: $nav-width;
+    gap: 10px;
+  }
+
   .logo {
     flex: none;
-    align-self: center;
-    width: auto;
+    width: $topbar-logo-height;
     height: $topbar-logo-height;
-    margin: 0 $nav-padding; // left edge lines up with the ToC text; same gap before the tabs
+  }
+
+  .brand-name {
+    font-size: $topbar-brand-size;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $topbar-brand-text;
+    white-space: nowrap;
+    margin-right: -0.14em; // cancel the trailing letter-spacing so the pair stays centred
   }
 }
 
@@ -641,6 +661,12 @@ html {
     top: $topbar-height;
   }
 
+  // The side menu is off-screen here, so the logo cell no longer has to match its width
+  .topbar .brand {
+    width: auto;
+    padding: 0 $nav-padding;
+  }
+
   .toc-link {
     padding-top: 0.3em;
     padding-bottom: 0.3em;
@@ -648,12 +674,13 @@ html {
 }
 
 @media (max-width: $phone-width) {
-  // The full logo plus both tabs don't fit on a phone: keep only the round mark
-  .topbar .logo {
-    width: $topbar-logo-height;
-    margin-right: 8px;
-    object-fit: cover;
-    object-position: left center;
+  // The wordmark plus both tabs don't fit on a phone: keep only the round mark
+  .topbar .brand {
+    padding-right: 8px;
+  }
+
+  .topbar .brand-name {
+    display: none;
   }
 
   .api-switcher {
