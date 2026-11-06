@@ -376,7 +376,7 @@
 <div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
-<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://thruxion.com/api/communications/auth/system-login'</span><span class="p">)</span>
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://thruxion.com/api/communications/login'</span><span class="p">)</span>
 <span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">)</span>
 <span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">username: </span><span class="s1">'admin'</span><span class="p">,</span> <span class="ss">password: </span><span class="s1">'yourpassword'</span> <span class="p">}.</span><span class="nf">to_json</span>
 
@@ -384,19 +384,19 @@
 <span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
 
-<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/auth/system-login"</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://thruxion.com/api/communications/login"</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">"username"</span><span class="p">:</span> <span class="s">"admin"</span><span class="p">,</span> <span class="s">"password"</span><span class="p">:</span> <span class="s">"yourpassword"</span><span class="p">}</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Prints the token response
-</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://thruxion.com/api/communications/auth/system-login"</span> <span class="se">\</span>
+</span></code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://thruxion.com/api/communications/login"</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
   <span class="nt">-d</span> <span class="s1">'{"username": "admin", "password": "yourpassword"}'</span>
 </code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="kd">const</span> <span class="nx">login</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
-        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://thruxion.com/api/communications/auth/system-login</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://thruxion.com/api/communications/login</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
             <span class="na">username</span><span class="p">:</span> <span class="dl">'</span><span class="s1">admin</span><span class="dl">'</span><span class="p">,</span>
             <span class="na">password</span><span class="p">:</span> <span class="dl">'</span><span class="s1">yourpassword</span><span class="dl">'</span>
         <span class="p">});</span>
@@ -427,7 +427,7 @@
 }</code></p></li>
 </ol>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code>POST https://thruxion.com/api/communications/auth/system-login</code></p>
+<p><code>POST https://thruxion.com/api/communications/login</code></p>
 <h3 id='url-parameters'>URL Parameters</h3>
 <table><thead>
 <tr>
