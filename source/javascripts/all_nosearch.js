@@ -9,9 +9,9 @@ function adjustLanguageSelectorWidth() {
 }
 
 $(function() {
-  // The fixed top menu covers the top of the viewport, so headings are
-  // considered "current" relative to the bottom edge of that menu.
-  var scrollOffset = 10 + ($('.api-switcher').outerHeight() || 0);
+  // The fixed top bar covers the top of the viewport, so headings are
+  // considered "current" relative to the bottom edge of that bar.
+  var scrollOffset = 10 + ($('.topbar').outerHeight() || 0);
   loadToc($('#toc'), '.toc-link', '.toc-list-h2', scrollOffset);
   setupLanguages($('body').data('languages'));
   $('.content').imagesLoaded( function() {

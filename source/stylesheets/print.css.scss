@@ -31,6 +31,12 @@ body {
   display: none;
 }
 
+// The logo lives in the top bar; keep it small on paper
+.topbar .logo {
+  width: auto;
+  height: $topbar-logo-height;
+}
+
 .tocify-wrapper>img {
   margin: 0 auto;
   display: block;

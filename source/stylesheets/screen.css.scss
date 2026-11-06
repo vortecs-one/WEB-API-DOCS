@@ -44,10 +44,10 @@ html {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// API SWITCHER (top menu to move between the API documentations)
+// TOP BAR (logo + menu to move between the API documentations)
 ////////////////////////////////////////////////////////////////////////////////
 
-.api-switcher {
+.topbar {
   position: fixed;
   top: 0;
   left: 0;
@@ -57,9 +57,24 @@ html {
   height: $topbar-height;
   display: flex;
   align-items: stretch;
-  overflow-x: auto;
   background-color: $topbar-bg;
   border-bottom: 1px solid $lang-select-border;
+
+  .logo {
+    flex: none;
+    align-self: center;
+    width: auto;
+    height: $topbar-logo-height;
+    margin: 0 $nav-padding; // left edge lines up with the ToC text; same gap before the tabs
+  }
+}
+
+// The tabs: one per API documentation
+.api-switcher {
+  display: flex;
+  align-items: stretch;
+  min-width: 0; // lets the tabs scroll instead of pushing past the bar
+  overflow-x: auto;
   font-size: 13px;
   font-weight: bold;
 
@@ -121,13 +136,6 @@ html {
       padding-top: 0.5em;
       padding-bottom: 0.5em;
     }
-  }
-
-  // This is the logo at the top of the ToC
-  .logo {
-    display: block;
-    max-width: 100%;
-    margin-bottom: $logo-margin;
   }
 
   &>.search {
@@ -640,6 +648,22 @@ html {
 }
 
 @media (max-width: $phone-width) {
+  // The full logo plus both tabs don't fit on a phone: keep only the round mark
+  .topbar .logo {
+    width: $topbar-logo-height;
+    margin-right: 8px;
+    object-fit: cover;
+    object-position: left center;
+  }
+
+  .api-switcher {
+    font-size: 12px;
+
+    a {
+      padding: 0 12px;
+    }
+  }
+
   .dark-box {
     display: none;
   }
