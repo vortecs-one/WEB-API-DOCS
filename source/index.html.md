@@ -41,7 +41,7 @@ The documenatation has a beta programming languages implementation of the API. c
 require 'net/http'
 require 'json'
 
-uri = URI('https://thruxion.com/api/communications/auth/system-login')
+uri = URI('https://thruxion.com/api/communications/login')
 req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
 req.body = { username: 'admin', password: 'yourpassword' }.to_json
 
@@ -52,7 +52,7 @@ puts res.body
 ```python
 import requests
 
-url = "https://thruxion.com/api/communications/auth/system-login"
+url = "https://thruxion.com/api/communications/login"
 data = {"username": "admin", "password": "yourpassword"}
 
 response = requests.post(url, json=data)
@@ -60,7 +60,7 @@ print(response.json())  # Prints the token response
 ```
 
 ```shell
-curl -X POST "https://thruxion.com/api/communications/auth/system-login" \
+curl -X POST "https://thruxion.com/api/communications/login" \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "yourpassword"}'
 ```
@@ -70,7 +70,7 @@ const axios = require('axios');
 
 const login = async () => {
     try {
-        const response = await axios.post('https://thruxion.com/api/communications/auth/system-login', {
+        const response = await axios.post('https://thruxion.com/api/communications/login', {
             username: 'admin',
             password: 'yourpassword'
         });
@@ -101,7 +101,7 @@ The authentication process involves two steps:
 
 ### HTTP Request
 
-`POST https://thruxion.com/api/communications/auth/system-login`
+`POST https://thruxion.com/api/communications/login`
 
 
 ### URL Parameters
