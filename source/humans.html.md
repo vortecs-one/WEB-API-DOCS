@@ -29,7 +29,7 @@ meta:
 
 API URL: https://thruxion.com/api/humans/
 
-The Humans API keeps a registry of people (humans) and what is known about them: their user accounts on different platforms, their skills and specialities, certificates, facial recognition records, bank cards and space-time records (where they were, and when). A human is the central record and everything else belongs to one.
+The Humans API keeps a registry of people (humans) and what is known about them: their user accounts on different platforms, their skills and specialities, certificates, facial recognition records, bank cards, space-time records (where they were, and when) and body measurements (height and weight over time). A human is the central record and everything else belongs to one.
 
 ![Humans data model](./images/h-model.svg)
 
@@ -150,7 +150,7 @@ The token expires after 2 hours. Log in again to get a new one.
 
 # Humans
 
-A human is the central record of the API. Users, certificates, facial recognition records, cards, space-time records and skill links all belong to a human.
+A human is the central record of the API. Users, certificates, facial recognition records, cards, space-time records, body measurements and skill links all belong to a human.
 
 ## Create Human
 
@@ -467,12 +467,21 @@ getHuman(1, 'YOUR_JWT_TOKEN');
                 "latitude": "-33.4569",
                 "timestamp": "2026-01-13T12:00:00.000Z"
             }
+        ],
+        "body_measurements": [
+            {
+                "id": 1,
+                "height_cm": 170.5,
+                "weight_kg": 68.2,
+                "measured_at": "2026-01-10T08:00:00.000Z",
+                "created_at": "2026-01-10T08:00:05.000Z"
+            }
         ]
     }
 }
 ```
 
-This endpoint retrieves one human together with everything that belongs to them: users, skills, certificates, facial recognition records, cards (without account numbers) and the 50 most recent space-time records.
+This endpoint retrieves one human together with everything that belongs to them: users, skills, certificates, facial recognition records, cards (without account numbers), the 50 most recent space-time records and the 50 most recent [body measurements](#body-measurements).
 
 ### HTTP Request
 
@@ -1104,10 +1113,6 @@ disableUser(1, 'YOUR_JWT_TOKEN');
 }
 ```
 
-<aside class="warning">
-This endpoint is not available yet. It is documented here for reference and will be released later.
-</aside>
-
 This endpoint disables a user. A disabled user can no longer log in: [Validate User Login](#validate-user-login) answers `403 Account inactive`. The request has no body.
 
 ### HTTP Request
@@ -1188,10 +1193,6 @@ getUserHuman(1, 'YOUR_JWT_TOKEN');
 }
 ```
 
-<aside class="warning">
-This endpoint is not available yet. It is documented here for reference and will be released later.
-</aside>
-
 This endpoint returns the human that a user belongs to.
 
 ### HTTP Request
@@ -1213,10 +1214,6 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 # Skills
 
 Skills are things a human can do. Link them to humans and to specialities with the [Relationships](#relationships) endpoints.
-
-<aside class="warning">
-These endpoints are not available yet. They are documented here for reference and will be released later.
-</aside>
 
 ## Create Skill
 
@@ -1530,8 +1527,10 @@ This endpoint updates a skill. Send only the fields you want to change.
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The skill ID
-name | body | string | No | Name of the skill.
-description | body | string | No | Description of the skill.
+name | body | string | No | Name of the skill, up to 100 characters.
+description | body | string | No | Description of the skill, up to 255 characters.
+
+If no field is sent, the answer is `400` with `{"error": "No fields provided for update"}`. If no skill has that ID, the answer is `404` with `{"message": "Not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -1605,6 +1604,8 @@ Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The skill ID
 
+If no skill has that ID, the answer is `404` with `{"message": "Not found"}`.
+
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
 </aside>
@@ -1612,10 +1613,6 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 # Specialities
 
 A speciality is a narrower area of expertise. Link specialities to skills with [Link Skill to Speciality](#link-skill-to-speciality).
-
-<aside class="warning">
-These endpoints are not available yet. They are documented here for reference and will be released later.
-</aside>
 
 ## Create Speciality
 
@@ -1922,7 +1919,9 @@ This endpoint renames a speciality.
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The speciality ID
-description | body | string | No | New name of the speciality.
+description | body | string | Yes | New name of the speciality, up to 100 characters.
+
+Without `description`, the answer is `400` with `{"error": "No fields provided for update"}`. If no speciality has that ID, the answer is `404` with `{"message": "Not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -1996,6 +1995,8 @@ Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The speciality ID
 
+If no speciality has that ID, the answer is `404` with `{"message": "Not found"}`.
+
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
 </aside>
@@ -2003,10 +2004,6 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 # Relationships
 
 These endpoints link records together: humans to skills, and skills to specialities. Both are many-to-many: a human can have many skills, and a skill can belong to many humans.
-
-<aside class="warning">
-These endpoints are not available yet. They are documented here for reference and will be released later.
-</aside>
 
 ## Link Human to Skill
 
@@ -2090,6 +2087,8 @@ Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 human_id | body | integer | Yes | The human.
 skill_id | body | integer | Yes | The skill.
+
+If the human or the skill does not exist, the answer is `404` with `{"message": "Human not found"}` or `{"message": "Skill not found"}`. If the human already has that skill, the answer is `409` with `{"message": "Already linked"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -2179,6 +2178,8 @@ Parameter | In | Type | Required | Description
 human_id | body | integer | Yes | The human.
 skill_id | body | integer | Yes | The skill.
 
+If the human does not have that skill, the answer is `404` with `{"message": "Link not found"}`.
+
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
 </aside>
@@ -2265,6 +2266,8 @@ Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 skill_id | body | integer | Yes | The skill.
 speciality_id | body | integer | Yes | The speciality.
+
+If the skill or the speciality does not exist, the answer is `404` with `{"message": "Skill not found"}` or `{"message": "Speciality not found"}`. If the skill already has that speciality, the answer is `409` with `{"message": "Already linked"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -2354,6 +2357,8 @@ Parameter | In | Type | Required | Description
 skill_id | body | integer | Yes | The skill.
 speciality_id | body | integer | Yes | The speciality.
 
+If the skill does not have that speciality, the answer is `404` with `{"message": "Link not found"}`.
+
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
 </aside>
@@ -2361,10 +2366,6 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 # Certificates
 
 Certificates document a human's qualifications. Each one can have a file attached: a JPEG or PNG image, a PDF, or an MP4, MOV, AVI or MKV video of up to 200 MB.
-
-<aside class="warning">
-These endpoints are not available yet. They are documented here for reference and will be released later.
-</aside>
 
 ## Create Certificate
 
@@ -2460,6 +2461,8 @@ human_id | form | integer | Yes | The human the certificate belongs to.
 description | form | string | No | Up to 255 characters.
 issued_at | form | date | No | Issue date, `YYYY-MM-DD`.
 file | form | file | No | JPEG, PNG, PDF, MP4, MOV, AVI or MKV, up to 200 MB.
+
+If no human has that `human_id`, the answer is `404` with `{"message": "Human not found"}`. A file of a type that is not allowed, or over the size limit, is refused with `400`, for example `{"error": "Invalid file type"}`. When a request fails, the file it uploaded is discarded.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -2700,11 +2703,11 @@ This endpoint updates a certificate and can replace its file. Send only the fiel
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The certificate ID
-description | form | string | No | New description.
+description | form | string | No | New description, up to 255 characters.
 issued_at | form | date | No | New issue date, `YYYY-MM-DD`.
-file | form | file | No | A new file, which replaces the old one.
+file | form | file | No | A new file, which replaces the old one. Same types and size limit as [Create Certificate](#create-certificate).
 
-If no certificate has that ID, the answer is `404` with `{"message": "Certificate not found"}`.
+If no field and no file is sent, the answer is `400` with `{"error": "No fields provided for update"}`. If no certificate has that ID, the answer is `404` with `{"message": "Certificate not found"}`. A file of a type that is not allowed, or over the size limit, is refused with `400`, for example `{"error": "Invalid file type"}`. When a request fails, the file it uploaded is discarded.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -2777,6 +2780,8 @@ This endpoint deletes a certificate.
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The certificate ID
+
+If no certificate has that ID, the answer is `404` with `{"message": "Certificate not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -3192,10 +3197,6 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 
 Bank cards and accounts that belong to a human.
 
-<aside class="warning">
-These endpoints are not available yet. They are documented here for reference and will be released later.
-</aside>
-
 ## Create Card
 
 ```ruby
@@ -3293,6 +3294,8 @@ account_number | body | string | Yes | The card or account number, already encry
 bank | body | string | No | Up to 100 characters.
 account_type | body | string | No | For example `checking` or `credit`. Up to 50 characters.
 expiration_date | body | date | No | `YYYY-MM-DD`.
+
+If no human has that `human_id`, the answer is `404` with `{"message": "Human not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -3546,10 +3549,12 @@ This endpoint updates a card. Send only the fields you want to change.
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The card ID
-bank | body | string | No | Bank name.
-account_type | body | string | No | Account type.
+bank | body | string | No | Bank name, up to 100 characters.
+account_type | body | string | No | Account type, up to 50 characters.
 account_number | body | string | No | New account number, already encrypted.
 expiration_date | body | date | No | `YYYY-MM-DD`.
+
+If no field is sent, the answer is `400` with `{"error": "No fields provided for update"}`. If no card has that ID, the answer is `404` with `{"message": "Not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -3623,6 +3628,8 @@ Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The card ID
 
+If no card has that ID, the answer is `404` with `{"message": "Not found"}`.
+
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
 </aside>
@@ -3630,10 +3637,6 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 # Space-Time
 
 Space-time records store where a human was, and when. Longitude and latitude are sent and returned as strings.
-
-<aside class="warning">
-These endpoints are not available yet. They are documented here for reference and will be released later.
-</aside>
 
 ## Create Space-Time Record
 
@@ -3724,9 +3727,11 @@ This endpoint records a human's position and returns the record's ID.
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 human_id | body | integer | Yes | The human.
-longitude | body | string | Yes | Longitude in decimal degrees, as a string, for example `"-70.6483"`.
-latitude | body | string | Yes | Latitude in decimal degrees, as a string, for example `"-33.4569"`.
+longitude | body | string | Yes | Longitude in decimal degrees, from `-180` to `180`, as a string, for example `"-70.6483"`.
+latitude | body | string | Yes | Latitude in decimal degrees, from `-90` to `90`, as a string, for example `"-33.4569"`.
 timestamp | body | date-time | No | When the human was there, `YYYY-MM-DD HH:MM:SS`. Default: now.
+
+If no human has that `human_id`, the answer is `404` with `{"message": "Human not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -3959,9 +3964,11 @@ This endpoint corrects a space-time record. Send only the fields you want to cha
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The space-time record ID
-longitude | body | string | No | Longitude, as a string.
-latitude | body | string | No | Latitude, as a string.
+longitude | body | string | No | Longitude, from `-180` to `180`, as a string.
+latitude | body | string | No | Latitude, from `-90` to `90`, as a string.
 timestamp | body | date-time | No | `YYYY-MM-DD HH:MM:SS`.
+
+If no field is sent, the answer is `400` with `{"error": "No fields provided for update"}`. If no record has that ID, the answer is `404` with `{"message": "Not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
@@ -4034,6 +4041,548 @@ This endpoint deletes a space-time record.
 Parameter | In | Type | Required | Description
 --------- | -- | ---- | -------- | -----------
 ID | path | integer | Yes | The space-time record ID
+
+If no record has that ID, the answer is `404` with `{"message": "Not found"}`.
+
+<aside class="notice">
+Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
+</aside>
+
+# Body Measurements
+
+Body measurements store a human's height and weight over time. Each record has a height, a weight or both, and the moment it was measured (`measured_at`). Height is in centimetres and weight in kilograms, both sent and returned as numbers.
+
+Records of one human are listed and created under the human (`/human/<ID>/measurements`), and a single record is read, updated or deleted by its own ID (`/measurements/<ID>`).
+
+## Create Measurement
+
+```ruby
+require 'net/http'
+require 'json'
+
+human_id = 1  # Replace 1 with the human ID
+uri = URI("https://thruxion.com/api/humans/human/#{human_id}/measurements")
+req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json', 'Authorization' => 'Bearer YOUR_JWT_TOKEN')
+req.body = {
+  height_cm: 170.5,
+  weight_kg: 68.2,
+  measured_at: '2026-01-10 08:00:00'
+}.to_json
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts res.body
+```
+
+```python
+import requests
+
+human_id = 1  # Replace 1 with the human ID
+url = f"https://thruxion.com/api/humans/human/{human_id}/measurements"
+headers = {"Authorization": "Bearer YOUR_JWT_TOKEN"}
+data = {
+    "height_cm": 170.5,
+    "weight_kg": 68.2,
+    "measured_at": "2026-01-10 08:00:00"
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+```shell
+curl -X POST "https://thruxion.com/api/humans/human/1/measurements" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "height_cm": 170.5,
+    "weight_kg": 68.2,
+    "measured_at": "2026-01-10 08:00:00"
+  }'
+```
+
+```javascript
+const axios = require('axios');
+
+const createMeasurement = async (humanId, token) => {
+    const data = {
+        height_cm: 170.5,
+        weight_kg: 68.2,
+        measured_at: '2026-01-10 08:00:00'
+    };
+    try {
+        const response = await axios.post(`https://thruxion.com/api/humans/human/${humanId}/measurements`, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+// Replace 1 with the human ID
+createMeasurement(1, 'YOUR_JWT_TOKEN');
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "success": true,
+    "message": "Measurement created",
+    "id": 1
+}
+```
+
+This endpoint records a human's height, weight or both, and returns the record's ID with status `201`. To record only one of them, leave the other out.
+
+### HTTP Request
+
+`POST https://thruxion.com/api/humans/human/<ID>/measurements`
+
+### Parameters
+
+Parameter | In | Type | Required | Description
+--------- | -- | ---- | -------- | -----------
+ID | path | integer | Yes | The human ID
+height_cm | body | number | No* | Height in centimetres, from `30` to `300`, for example `170.5`.
+weight_kg | body | number | No* | Weight in kilograms, from `0.5` to `700`, for example `68.2`.
+measured_at | body | date-time | No | When it was measured, `YYYY-MM-DD HH:MM:SS` or `YYYY-MM-DD`. It cannot be in the future. Default: now.
+
+\* At least one of `height_cm` and `weight_kg` is required. Without both, the answer is `400` with `{"success": false, "error": "Provide height_cm, weight_kg or both"}`.
+
+If no human has that ID, the answer is `404` with `{"success": false, "message": "Human not found"}`.
+
+<aside class="notice">
+Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
+</aside>
+
+## List Measurements of a Human
+
+```ruby
+require 'net/http'
+require 'json'
+
+human_id = 1  # Replace 1 with the human ID
+uri = URI("https://thruxion.com/api/humans/human/#{human_id}/measurements")
+uri.query = URI.encode_www_form(from: '2026-01-01', to: '2026-03-31', page: 1, limit: 50)
+req = Net::HTTP::Get.new(uri, 'Authorization' => 'Bearer YOUR_JWT_TOKEN')
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts res.body
+```
+
+```python
+import requests
+
+human_id = 1  # Replace 1 with the human ID
+url = f"https://thruxion.com/api/humans/human/{human_id}/measurements"
+headers = {"Authorization": "Bearer YOUR_JWT_TOKEN"}
+params = {"from": "2026-01-01", "to": "2026-03-31", "page": 1, "limit": 50}
+
+response = requests.get(url, headers=headers, params=params)
+print(response.json())
+```
+
+```shell
+curl "https://thruxion.com/api/humans/human/1/measurements?from=2026-01-01&to=2026-03-31&page=1&limit=50" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+```javascript
+const axios = require('axios');
+
+const listMeasurements = async (humanId, token) => {
+    try {
+        const response = await axios.get(`https://thruxion.com/api/humans/human/${humanId}/measurements`, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { from: '2026-01-01', to: '2026-03-31', page: 1, limit: 50 }
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+// Replace 1 with the human ID
+listMeasurements(1, 'YOUR_JWT_TOKEN');
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "success": true,
+    "human_id": 1,
+    "page": 1,
+    "limit": 50,
+    "count": 2,
+    "data": [
+        {
+            "id": 2,
+            "human_id": 1,
+            "height_cm": null,
+            "weight_kg": 67.4,
+            "measured_at": "2026-03-01T12:00:00.000Z",
+            "created_at": "2026-03-01T12:00:05.000Z"
+        },
+        {
+            "id": 1,
+            "human_id": 1,
+            "height_cm": 170.5,
+            "weight_kg": 68.2,
+            "measured_at": "2026-01-10T08:00:00.000Z",
+            "created_at": "2026-01-10T08:00:05.000Z"
+        }
+    ]
+}
+```
+
+This endpoint lists a human's measurements, newest first, one page at a time. A record with only one of the values has `null` for the other.
+
+### HTTP Request
+
+`GET https://thruxion.com/api/humans/human/<ID>/measurements`
+
+### Parameters
+
+Parameter | In | Type | Required | Description
+--------- | -- | ---- | -------- | -----------
+ID | path | integer | Yes | The human ID
+from | query | date-time | No | Only records measured at or after this moment, `YYYY-MM-DD` or `YYYY-MM-DD HH:MM:SS`.
+to | query | date-time | No | Only records measured at or before this moment. A date without time includes that whole day.
+page | query | integer | No | Page number, starting at 1. Default: 1.
+limit | query | integer | No | Records per page, from 1 to 100. Default: 50.
+
+If no human has that ID, the answer is `404` with `{"success": false, "message": "Human not found"}`.
+
+<aside class="notice">
+Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
+</aside>
+
+## Get Latest Measurement
+
+```ruby
+require 'net/http'
+require 'json'
+
+human_id = 1  # Replace 1 with the human ID
+uri = URI("https://thruxion.com/api/humans/human/#{human_id}/measurements/latest")
+req = Net::HTTP::Get.new(uri, 'Authorization' => 'Bearer YOUR_JWT_TOKEN')
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts res.body
+```
+
+```python
+import requests
+
+human_id = 1  # Replace 1 with the human ID
+url = f"https://thruxion.com/api/humans/human/{human_id}/measurements/latest"
+headers = {"Authorization": "Bearer YOUR_JWT_TOKEN"}
+
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+```shell
+curl "https://thruxion.com/api/humans/human/1/measurements/latest" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+```javascript
+const axios = require('axios');
+
+const getLatestMeasurement = async (humanId, token) => {
+    try {
+        const response = await axios.get(`https://thruxion.com/api/humans/human/${humanId}/measurements/latest`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+// Replace 1 with the human ID
+getLatestMeasurement(1, 'YOUR_JWT_TOKEN');
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "success": true,
+    "data": {
+        "human_id": 1,
+        "height_cm": 170.5,
+        "height_measured_at": "2026-01-10T08:00:00.000Z",
+        "weight_kg": 67.4,
+        "weight_measured_at": "2026-03-01T12:00:00.000Z"
+    }
+}
+```
+
+This endpoint returns a human's most recent height and most recent weight. They can come from different records, so each one has its own date. A value that was never measured is `null`.
+
+### HTTP Request
+
+`GET https://thruxion.com/api/humans/human/<ID>/measurements/latest`
+
+### Parameters
+
+Parameter | In | Type | Required | Description
+--------- | -- | ---- | -------- | -----------
+ID | path | integer | Yes | The human ID
+
+If no human has that ID, the answer is `404` with `{"success": false, "message": "Human not found"}`.
+
+<aside class="notice">
+Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
+</aside>
+
+## Get Measurement
+
+```ruby
+require 'net/http'
+require 'json'
+
+measurement_id = 1  # Replace 1 with the measurement ID
+uri = URI("https://thruxion.com/api/humans/measurements/#{measurement_id}")
+req = Net::HTTP::Get.new(uri, 'Authorization' => 'Bearer YOUR_JWT_TOKEN')
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts res.body
+```
+
+```python
+import requests
+
+measurement_id = 1  # Replace 1 with the measurement ID
+url = f"https://thruxion.com/api/humans/measurements/{measurement_id}"
+headers = {"Authorization": "Bearer YOUR_JWT_TOKEN"}
+
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+```shell
+curl "https://thruxion.com/api/humans/measurements/1" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+```javascript
+const axios = require('axios');
+
+const getMeasurement = async (id, token) => {
+    try {
+        const response = await axios.get(`https://thruxion.com/api/humans/measurements/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+// Replace 1 with the measurement ID
+getMeasurement(1, 'YOUR_JWT_TOKEN');
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "success": true,
+    "data": {
+        "id": 1,
+        "human_id": 1,
+        "height_cm": 170.5,
+        "weight_kg": 68.2,
+        "measured_at": "2026-01-10T08:00:00.000Z",
+        "created_at": "2026-01-10T08:00:05.000Z"
+    }
+}
+```
+
+This endpoint retrieves one measurement.
+
+### HTTP Request
+
+`GET https://thruxion.com/api/humans/measurements/<ID>`
+
+### Parameters
+
+Parameter | In | Type | Required | Description
+--------- | -- | ---- | -------- | -----------
+ID | path | integer | Yes | The measurement ID
+
+If no measurement has that ID, the answer is `404` with `{"success": false, "message": "Measurement not found"}`.
+
+<aside class="notice">
+Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
+</aside>
+
+## Update Measurement
+
+```ruby
+require 'net/http'
+require 'json'
+
+measurement_id = 1  # Replace 1 with the measurement ID
+uri = URI("https://thruxion.com/api/humans/measurements/#{measurement_id}")
+req = Net::HTTP::Put.new(uri, 'Content-Type' => 'application/json', 'Authorization' => 'Bearer YOUR_JWT_TOKEN')
+req.body = {
+  weight_kg: 68.0
+}.to_json
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts res.body
+```
+
+```python
+import requests
+
+measurement_id = 1  # Replace 1 with the measurement ID
+url = f"https://thruxion.com/api/humans/measurements/{measurement_id}"
+headers = {"Authorization": "Bearer YOUR_JWT_TOKEN"}
+data = {
+    "weight_kg": 68.0
+}
+
+response = requests.put(url, headers=headers, json=data)
+print(response.json())
+```
+
+```shell
+curl -X PUT "https://thruxion.com/api/humans/measurements/1" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "weight_kg": 68.0
+  }'
+```
+
+```javascript
+const axios = require('axios');
+
+const updateMeasurement = async (id, token) => {
+    const data = {
+        weight_kg: 68.0
+    };
+    try {
+        const response = await axios.put(`https://thruxion.com/api/humans/measurements/${id}`, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+// Replace 1 with the measurement ID
+updateMeasurement(1, 'YOUR_JWT_TOKEN');
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "success": true,
+    "message": "Measurement updated"
+}
+```
+
+This endpoint updates a measurement. Send only the fields you want to change, and the others keep their value. A value can be corrected or added, but not removed. To remove one, delete the record and create a new one.
+
+### HTTP Request
+
+`PUT https://thruxion.com/api/humans/measurements/<ID>`
+
+### Parameters
+
+Parameter | In | Type | Required | Description
+--------- | -- | ---- | -------- | -----------
+ID | path | integer | Yes | The measurement ID
+height_cm | body | number | No | Height in centimetres, from `30` to `300`.
+weight_kg | body | number | No | Weight in kilograms, from `0.5` to `700`.
+measured_at | body | date-time | No | When it was measured, `YYYY-MM-DD HH:MM:SS` or `YYYY-MM-DD`. It cannot be in the future.
+
+Without any of these fields, the answer is `400` with `{"success": false, "error": "No fields provided for update"}`. If no measurement has that ID, the answer is `404` with `{"success": false, "message": "Measurement not found"}`.
+
+<aside class="notice">
+Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
+</aside>
+
+## Delete Measurement
+
+```ruby
+require 'net/http'
+require 'json'
+
+measurement_id = 1  # Replace 1 with the measurement ID
+uri = URI("https://thruxion.com/api/humans/measurements/#{measurement_id}")
+req = Net::HTTP::Delete.new(uri, 'Authorization' => 'Bearer YOUR_JWT_TOKEN')
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+puts res.body
+```
+
+```python
+import requests
+
+measurement_id = 1  # Replace 1 with the measurement ID
+url = f"https://thruxion.com/api/humans/measurements/{measurement_id}"
+headers = {"Authorization": "Bearer YOUR_JWT_TOKEN"}
+
+response = requests.delete(url, headers=headers)
+print(response.json())
+```
+
+```shell
+curl -X DELETE "https://thruxion.com/api/humans/measurements/1" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+```javascript
+const axios = require('axios');
+
+const deleteMeasurement = async (id, token) => {
+    try {
+        const response = await axios.delete(`https://thruxion.com/api/humans/measurements/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+// Replace 1 with the measurement ID
+deleteMeasurement(1, 'YOUR_JWT_TOKEN');
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "success": true,
+    "message": "Measurement deleted"
+}
+```
+
+This endpoint deletes a measurement.
+
+### HTTP Request
+
+`DELETE https://thruxion.com/api/humans/measurements/<ID>`
+
+### Parameters
+
+Parameter | In | Type | Required | Description
+--------- | -- | ---- | -------- | -----------
+ID | path | integer | Yes | The measurement ID
+
+If no measurement has that ID, the answer is `404` with `{"success": false, "message": "Measurement not found"}`.
 
 <aside class="notice">
 Requires an admin token from <a href='#system-login'>System Login</a> in the Authorization header as Bearer.
