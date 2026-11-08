@@ -1039,7 +1039,7 @@ getCurrentUser('YOUR_USER_TOKEN');
 ```
 
 <aside class="warning">
-This endpoint is temporarily unavailable: requests currently get no response. It is documented as it will work once the fix is released. It also needs a user token, which the API does not issue yet.
+This endpoint is not available yet. It is documented here for reference and will be released later. It also needs a user token, which the API does not issue yet.
 </aside>
 
 This endpoint returns the logged-in user's account and the name of their human. It needs a token issued to the user, not a system token; any other token is refused with `403`.
@@ -1105,7 +1105,7 @@ disableUser(1, 'YOUR_JWT_TOKEN');
 ```
 
 <aside class="warning">
-This endpoint is temporarily unavailable: requests currently get no response. It is documented as it will work once the fix is released.
+This endpoint is not available yet. It is documented here for reference and will be released later.
 </aside>
 
 This endpoint disables a user. A disabled user can no longer log in: [Validate User Login](#validate-user-login) answers `403 Account inactive`. The request has no body.
@@ -1189,7 +1189,7 @@ getUserHuman(1, 'YOUR_JWT_TOKEN');
 ```
 
 <aside class="warning">
-This endpoint is temporarily unavailable: requests currently get no response. It is documented as it will work once the fix is released.
+This endpoint is not available yet. It is documented here for reference and will be released later.
 </aside>
 
 This endpoint returns the human that a user belongs to.
@@ -1215,7 +1215,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 Skills are things a human can do. Link them to humans and to specialities with the [Relationships](#relationships) endpoints.
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Create Skill
@@ -1614,7 +1614,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 A speciality is a narrower area of expertise. Link specialities to skills with [Link Skill to Speciality](#link-skill-to-speciality).
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Create Speciality
@@ -2005,7 +2005,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 These endpoints link records together: humans to skills, and skills to specialities. Both are many-to-many: a human can have many skills, and a skill can belong to many humans.
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Link Human to Skill
@@ -2363,7 +2363,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 Certificates document a human's qualifications. Each one can have a file attached: a JPEG or PNG image, a PDF, or an MP4, MOV, AVI or MKV video of up to 200 MB.
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Create Certificate
@@ -2787,7 +2787,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 A facial recognition record stores a fingerprint of a photo of the human's face: the SHA-256 hash of the image file. It shows whether exactly the same image file is presented again; it does not compare faces. `facial_validation` is `0` until the record is validated, then `1`.
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Create Facial Recognition
@@ -3193,7 +3193,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 Bank cards and accounts that belong to a human.
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Create Card
@@ -3632,7 +3632,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 Space-time records store where a human was, and when. Longitude and latitude are sent and returned as strings.
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 
 ## Create Space-Time Record
