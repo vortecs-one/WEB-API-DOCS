@@ -303,7 +303,9 @@
       </div>
       <nav class="api-switcher" aria-label="API documentation">
           <a href="index.html">Communications API</a>
+          <a href="foods.html">Food API</a>
           <a href="humans.html" class="active" aria-current="page">Humans API</a>
+          <a href="machines.html">Machines API</a>
       </nav>
     </header>
     <a href="#" id="nav-button">
@@ -1657,7 +1659,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <aside class="warning">
-This endpoint is temporarily unavailable: requests currently get no response. It is documented as it will work once the fix is released. It also needs a user token, which the API does not issue yet.
+This endpoint is not available yet. It is documented here for reference and will be released later. It also needs a user token, which the API does not issue yet.
 </aside>
 
 <p>This endpoint returns the logged-in user&#39;s account and the name of their human. It needs a token issued to the user, not a system token; any other token is refused with <code>403</code>.</p>
@@ -1706,7 +1708,7 @@ This endpoint is temporarily unavailable: requests currently get no response. It
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <aside class="warning">
-This endpoint is temporarily unavailable: requests currently get no response. It is documented as it will work once the fix is released.
+This endpoint is not available yet. It is documented here for reference and will be released later.
 </aside>
 
 <p>This endpoint disables a user. A disabled user can no longer log in: <a href="#validate-user-login">Validate User Login</a> answers <code>403 Account inactive</code>. The request has no body.</p>
@@ -1785,7 +1787,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <aside class="warning">
-This endpoint is temporarily unavailable: requests currently get no response. It is documented as it will work once the fix is released.
+This endpoint is not available yet. It is documented here for reference and will be released later.
 </aside>
 
 <p>This endpoint returns the human that a user belongs to.</p>
@@ -1819,7 +1821,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>Skills are things a human can do. Link them to humans and to specialities with the <a href="#relationships">Relationships</a> endpoints.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='create-skill'>Create Skill</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2197,7 +2199,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>A speciality is a narrower area of expertise. Link specialities to skills with <a href="#link-skill-to-speciality">Link Skill to Speciality</a>.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='create-speciality'>Create Speciality</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2555,7 +2557,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>These endpoints link records together: humans to skills, and skills to specialities. Both are many-to-many: a human can have many skills, and a skill can belong to many humans.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='link-human-to-skill'>Link Human to Skill</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -2915,7 +2917,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>Certificates document a human&#39;s qualifications. Each one can have a file attached: a JPEG or PNG image, a PDF, or an MP4, MOV, AVI or MKV video of up to 200 MB.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='create-certificate'>Create Certificate</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -3336,7 +3338,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>A facial recognition record stores a fingerprint of a photo of the human&#39;s face: the SHA-256 hash of the image file. It shows whether exactly the same image file is presented again; it does not compare faces. <code>facial_validation</code> is <code>0</code> until the record is validated, then <code>1</code>.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='create-facial-recognition'>Create Facial Recognition</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -3721,7 +3723,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>Bank cards and accounts that belong to a human.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='create-card'>Create Card</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -4169,7 +4171,7 @@ Requires an admin token from <a href='#system-login'>System Login</a> in the Aut
 <p>Space-time records store where a human was, and when. Longitude and latitude are sent and returned as strings.</p>
 
 <aside class="warning">
-These endpoints are temporarily unavailable: requests currently get no response. They are documented as they will work once the fix is released.
+These endpoints are not available yet. They are documented here for reference and will be released later.
 </aside>
 <h2 id='create-space-time-record'>Create Space-Time Record</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
