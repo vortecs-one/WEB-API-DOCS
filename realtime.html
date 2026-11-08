@@ -1,0 +1,1960 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta
+            name="description"
+            content="Documentation for the Real-Time WebSocket API"
+        >
+    <title>Thruxion API - Real-Time WebSocket</title>
+
+    <style media="screen">
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cpf {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s, .highlight .sa, .highlight .dl {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf, .highlight .fm {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv, .highlight .vm {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #f92672;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <style media="print">
+      * {
+        -webkit-transition:none!important;
+        transition:none!important;
+      }
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight, .highlight .w {
+  color: #586e75;
+}
+.highlight .err {
+  color: #002b36;
+  background-color: #dc322f;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cm, .highlight .cpf, .highlight .c1, .highlight .cs {
+  color: #657b83;
+}
+.highlight .cp {
+  color: #b58900;
+}
+.highlight .nt {
+  color: #b58900;
+}
+.highlight .o, .highlight .ow {
+  color: #93a1a1;
+}
+.highlight .p, .highlight .pi {
+  color: #93a1a1;
+}
+.highlight .gi {
+  color: #859900;
+}
+.highlight .gd {
+  color: #dc322f;
+}
+.highlight .gh {
+  color: #268bd2;
+  background-color: #002b36;
+  font-weight: bold;
+}
+.highlight .k, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv {
+  color: #6c71c4;
+}
+.highlight .kc {
+  color: #cb4b16;
+}
+.highlight .kt {
+  color: #cb4b16;
+}
+.highlight .kd {
+  color: #cb4b16;
+}
+.highlight .s, .highlight .sb, .highlight .sc, .highlight .dl, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 {
+  color: #859900;
+}
+.highlight .sa {
+  color: #6c71c4;
+}
+.highlight .sr {
+  color: #2aa198;
+}
+.highlight .si {
+  color: #d33682;
+}
+.highlight .se {
+  color: #d33682;
+}
+.highlight .nn {
+  color: #b58900;
+}
+.highlight .nc {
+  color: #b58900;
+}
+.highlight .no {
+  color: #b58900;
+}
+.highlight .na {
+  color: #268bd2;
+}
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mx {
+  color: #859900;
+}
+.highlight .ss {
+  color: #859900;
+}
+    </style>
+    <link href="stylesheets/screen-f005b3e2.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print-95e92141.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all-47223a8c.js"></script>
+
+    <script>
+      $(function() { setupCodeCopy(); });
+    </script>
+  </head>
+
+  <body class="realtime" data-languages="[&quot;shell&quot;,&quot;ruby&quot;,&quot;python&quot;,&quot;javascript&quot;]">
+    <header class="topbar">
+      <div class="brand">
+        <img src="images/logo-mark-c9d055f6.png" class="logo" alt="" width="80" height="80" />
+        <span class="brand-name">Thruxion</span>
+      </div>
+      <nav class="api-switcher" aria-label="API documentation">
+          <a href="index.html">Communications API</a>
+          <a href="foods.html">Food API</a>
+          <a href="humans.html">Humans API</a>
+          <a href="machines.html">Machines API</a>
+          <a href="realtime.html" class="active" aria-current="page">Real-Time WebSocket</a>
+      </nav>
+    </header>
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar-cad8cdcb.png" alt="" />
+      </span>
+    </a>
+    <div class="toc-wrapper">
+        <div class="lang-selector">
+              <a href="#" data-language-name="shell">shell</a>
+              <a href="#" data-language-name="ruby">ruby</a>
+              <a href="#" data-language-name="python">python</a>
+              <a href="#" data-language-name="javascript">javascript</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <ul id="toc" class="toc-list-h1">
+          <li>
+            <a href="#thruxion-realtime-websocket" class="toc-h1 toc-link" data-title="Thruxion - Realtime WebSocket">Thruxion - Realtime WebSocket</a>
+          </li>
+          <li>
+            <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
+          </li>
+          <li>
+            <a href="#devices" class="toc-h1 toc-link" data-title="Devices">Devices</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#register-device" class="toc-h2 toc-link" data-title="Register Device">Register Device</a>
+                  </li>
+                  <li>
+                    <a href="#list-my-devices" class="toc-h2 toc-link" data-title="List My Devices">List My Devices</a>
+                  </li>
+                  <li>
+                    <a href="#revoke-my-device" class="toc-h2 toc-link" data-title="Revoke My Device">Revoke My Device</a>
+                  </li>
+                  <li>
+                    <a href="#get-websocket-ticket" class="toc-h2 toc-link" data-title="Get WebSocket Ticket">Get WebSocket Ticket</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#connecting" class="toc-h1 toc-link" data-title="Connecting">Connecting</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#connect-a-phone" class="toc-h2 toc-link" data-title="Connect a Phone">Connect a Phone</a>
+                  </li>
+                  <li>
+                    <a href="#message-format" class="toc-h2 toc-link" data-title="Message Format">Message Format</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#sending-locations" class="toc-h1 toc-link" data-title="Sending Locations">Sending Locations</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#location-update" class="toc-h2 toc-link" data-title="location.update">location.update</a>
+                  </li>
+                  <li>
+                    <a href="#location-batch" class="toc-h2 toc-link" data-title="location.batch">location.batch</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#server-replies" class="toc-h1 toc-link" data-title="Server Replies">Server Replies</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#ack" class="toc-h2 toc-link" data-title="ack">ack</a>
+                  </li>
+                  <li>
+                    <a href="#error" class="toc-h2 toc-link" data-title="error">error</a>
+                  </li>
+                  <li>
+                    <a href="#delivery-rules" class="toc-h2 toc-link" data-title="Delivery Rules">Delivery Rules</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#keeping-a-connection-alive" class="toc-h1 toc-link" data-title="Keeping a Connection Alive">Keeping a Connection Alive</a>
+          </li>
+          <li>
+            <a href="#websites" class="toc-h1 toc-link" data-title="Websites">Websites</a>
+          </li>
+          <li>
+            <a href="#staff" class="toc-h1 toc-link" data-title="Staff">Staff</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#live-views" class="toc-h2 toc-link" data-title="Live Views">Live Views</a>
+                  </li>
+                  <li>
+                    <a href="#list-all-devices" class="toc-h2 toc-link" data-title="List All Devices">List All Devices</a>
+                  </li>
+                  <li>
+                    <a href="#get-location-history" class="toc-h2 toc-link" data-title="Get Location History">Get Location History</a>
+                  </li>
+                  <li>
+                    <a href="#revoke-device" class="toc-h2 toc-link" data-title="Revoke Device">Revoke Device</a>
+                  </li>
+                  <li>
+                    <a href="#get-audit-log" class="toc-h2 toc-link" data-title="Get Audit Log">Get Audit Log</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#rest-errors" class="toc-h2 toc-link" data-title="REST Errors">REST Errors</a>
+                  </li>
+                  <li>
+                    <a href="#websocket-error-codes" class="toc-h2 toc-link" data-title="WebSocket Error Codes">WebSocket Error Codes</a>
+                  </li>
+                  <li>
+                    <a href="#websocket-close-codes" class="toc-h2 toc-link" data-title="WebSocket Close Codes">WebSocket Close Codes</a>
+                  </li>
+              </ul>
+          </li>
+      </ul>
+        <ul class="toc-footer">
+            <li><a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='thruxion-realtime-websocket'>Thruxion - Realtime WebSocket</h1>
+<p>WebSocket URL: wss://rt.thruxion.com/v1/ws</p>
+
+<p>REST API URL: https://rt.thruxion.com/v1/</p>
+
+<p>The Real-Time WebSocket API streams device locations live. Phones (and websites you allow) keep a WebSocket open and send their position as it changes; staff watch those positions live on a map, look up the history of a device and revoke devices. Points are stored for 30 days.</p>
+
+<p>There are two sides:</p>
+
+<ul>
+<li><strong>Public</strong> (<code>rt.thruxion.com</code>): phones and allowed websites register a device and send locations.</li>
+<li><strong>Private</strong> (the staff host, reachable only from the office or the VPN): staff watch live views, read history and the audit log. See <a href="#staff">Staff</a>.</li>
+</ul>
+
+<p>The documentation has code examples in Shell, Ruby, Python and JavaScript:</p>
+
+<ul>
+<li>Shell: <code>curl</code> for REST calls and <a href="https://github.com/vi/websocat"><code>websocat</code></a> for the WebSocket.</li>
+<li>Ruby: <code>net/http</code>, and the <code>faye-websocket</code> gem (which runs on EventMachine) for the WebSocket.</li>
+<li>Python: the <code>requests</code> and <code>websockets</code> packages.</li>
+<li>JavaScript: Node.js with the <code>axios</code> and <code>ws</code> packages.</li>
+</ul>
+
+<p>Conventions used everywhere:</p>
+
+<ul>
+<li>REST requests and responses are JSON over HTTPS. Responses are never cached.</li>
+<li>WebSocket messages are JSON <strong>text</strong> frames of at most 16 KiB, all in the same envelope (see <a href="#message-format">Message Format</a>).</li>
+<li>Every request needs an access token: in the <code>Authorization: Bearer &lt;token&gt;</code> header for REST calls and phone connections, or a one-time <a href="#get-websocket-ticket">ticket</a> for browsers.</li>
+<li>Device IDs are UUIDs. Times are epoch milliseconds inside WebSocket messages, and ISO 8601 (UTC) in REST responses, for example <code>2026-10-05T20:00:00.000Z</code>.</li>
+</ul>
+<h1 id='authentication'>Authentication</h1>
+<p>Access tokens come from Thruxion&#39;s Keycloak server, using OpenID Connect (authorization code flow with PKCE S256). The password is typed only on the Keycloak login page, never in your app or website.</p>
+
+<table><thead>
+<tr>
+<th>Who</th>
+<th>Realm (issuer)</th>
+<th>Client</th>
+<th>Role needed</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Android app</td>
+<td><code>https://rt.thruxion.com/realms/field</code></td>
+<td><code>rt-android</code></td>
+<td><code>tracker</code></td>
+</tr>
+<tr>
+<td>Website</td>
+<td><code>https://rt.thruxion.com/realms/field</code></td>
+<td><code>rt-web</code></td>
+<td><code>tracker</code></td>
+</tr>
+<tr>
+<td>Staff dashboard</td>
+<td><code>https://&lt;staff host&gt;/realms/staff</code></td>
+<td><code>rt-dashboard</code></td>
+<td><code>developer</code> or <code>admin</code></td>
+</tr>
+</tbody></table>
+
+<p>The OpenID configuration of a realm is at <code>&lt;issuer&gt;/.well-known/openid-configuration</code>. All clients are public (there is no client secret) and the password grant is disabled, so use an OpenID Connect library such as AppAuth on Android or <code>oidc-client-ts</code> in a browser.</p>
+
+<p>Access tokens last <strong>5 minutes</strong>. Refresh them with the refresh token before they expire. A WebSocket can stay open much longer: see <a href="#keeping-a-connection-alive">Keeping a Connection Alive</a>.</p>
+
+<aside class="notice">
+The examples on this page read the access token from <code>$TOKEN</code> (or <code>TOKEN</code>) and the device ID from <code>$DEVICE_ID</code>. Replace them with your own values.
+</aside>
+
+<aside class="warning">
+Keep tokens in memory, never in local storage, cookies or URLs. Each refresh token works only once: if one is used twice, Keycloak ends the whole session.
+</aside>
+<h1 id='devices'>Devices</h1>
+<p>Before it can connect, a phone or browser registers itself as a device. A user can have up to <strong>3</strong> active devices. These endpoints are on the public host and need a token from the <code>field</code> realm with the <code>tracker</code> role.</p>
+<h2 id='register-device'>Register Device</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://rt.thruxion.com/v1/devices'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+                               <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">name: </span><span class="s1">'Pixel 8'</span><span class="p">,</span> <span class="ss">appVersion: </span><span class="s1">'1.4.0'</span> <span class="p">}.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://rt.thruxion.com/v1/devices"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Pixel 8"</span><span class="p">,</span> <span class="s">"appVersion"</span><span class="p">:</span> <span class="s">"1.4.0"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://rt.thruxion.com/v1/devices"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{"name": "Pixel 8", "appVersion": "1.4.0"}'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">registerDevice</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span>
+            <span class="dl">'</span><span class="s1">https://rt.thruxion.com/v1/devices</span><span class="dl">'</span><span class="p">,</span>
+            <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Pixel 8</span><span class="dl">'</span><span class="p">,</span> <span class="na">appVersion</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1.4.0</span><span class="dl">'</span> <span class="p">},</span>
+            <span class="p">{</span> <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span> <span class="p">}</span>
+        <span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">registerDevice</span><span class="p">();</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this (201):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pixel 8"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"appVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.4.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:00:00.000Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"lastSeenAt"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>The user already has 3 active devices (409):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"device_limit"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Registers the phone or browser that makes the request. Keep the returned <code>id</code>: it is the <code>X-Device-Id</code> the phone sends when it connects, and the <code>deviceId</code> a website asks a ticket for. Register once per installation, not on every start.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code>POST https://rt.thruxion.com/v1/devices</code></p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>no</td>
+<td>A name to recognise the device, up to 64 characters: letters, digits, spaces and <code>_ . &#39; -</code>. Staff see it in their dashboard.</td>
+</tr>
+<tr>
+<td>appVersion</td>
+<td>no</td>
+<td>Your app&#39;s version, up to 32 characters: letters, digits and <code>. + -</code>.</td>
+</tr>
+</tbody></table>
+<h3 id='response'>Response</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td>The device ID (UUID).</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>The name sent, or <code>&quot;&quot;</code>.</td>
+</tr>
+<tr>
+<td>appVersion</td>
+<td>string</td>
+<td>The app version sent, or <code>&quot;&quot;</code>.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>string</td>
+<td><code>active</code> or <code>revoked</code>.</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>string</td>
+<td>When the device was registered.</td>
+</tr>
+<tr>
+<td>lastSeenAt</td>
+<td>string or null</td>
+<td>When the device last connected, or <code>null</code>.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Registration is limited to 5 requests per minute per user. Over that, the API answers <code>429</code>.
+</aside>
+<h2 id='list-my-devices'>List My Devices</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://rt.thruxion.com/v1/devices'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://rt.thruxion.com/v1/devices"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://rt.thruxion.com/v1/devices"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">listDevices</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://rt.thruxion.com/v1/devices</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">listDevices</span><span class="p">();</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"devices"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pixel 8"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"appVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.4.0"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:00:00.000Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"lastSeenAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T21:14:03.000Z"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Returns the devices of the logged-in user. Each device has the fields described in <a href="#register-device">Register Device</a>.</p>
+<h3 id='http-request-2'>HTTP Request</h3>
+<p><code>GET https://rt.thruxion.com/v1/devices</code></p>
+<h2 id='revoke-my-device'>Revoke My Device</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+
+<span class="n">device_id</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'DEVICE_ID'</span><span class="p">]</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://rt.thruxion.com/v1/devices/</span><span class="si">#{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Delete</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">code</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">device_id</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"DEVICE_ID"</span><span class="p">]</span>
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://rt.thruxion.com/v1/devices/</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s">"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">status_code</span><span class="p">)</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> DELETE <span class="s2">"https://rt.thruxion.com/v1/devices/</span><span class="nv">$DEVICE_ID</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">revokeDevice</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">deviceId</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">`https://rt.thruxion.com/v1/devices/</span><span class="p">${</span><span class="nx">deviceId</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">revokeDevice</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DEVICE_ID</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns <code>204 No Content</code> with an empty body.</p>
+</blockquote>
+
+<p>Revokes one of the user&#39;s own devices, for example a lost phone. Its open WebSocket closes with code <code>4003</code>, and it can no longer connect. A revoked device no longer counts towards the limit of 3.</p>
+<h3 id='http-request-3'>HTTP Request</h3>
+<p><code>DELETE https://rt.thruxion.com/v1/devices/&lt;ID&gt;</code></p>
+<h3 id='url-parameters'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ID</td>
+<td>The device ID. Answers <code>404</code> if it is not one of the user&#39;s active devices.</td>
+</tr>
+</tbody></table>
+<h2 id='get-websocket-ticket'>Get WebSocket Ticket</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://rt.thruxion.com/v1/ws-tickets'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+                               <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">deviceId: </span><span class="no">ENV</span><span class="p">[</span><span class="s1">'DEVICE_ID'</span><span class="p">]</span> <span class="p">}.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://rt.thruxion.com/v1/ws-tickets"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">"deviceId"</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"DEVICE_ID"</span><span class="p">]}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://rt.thruxion.com/v1/ws-tickets"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s2">"{</span><span class="se">\"</span><span class="s2">deviceId</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="nv">$DEVICE_ID</span><span class="se">\"</span><span class="s2">}"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// In a web page (the browser sends the Origin header)</span>
+<span class="kd">const</span> <span class="nx">getTicket</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">deviceId</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://rt.thruxion.com/v1/ws-tickets</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span> <span class="p">},</span>
+        <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span> <span class="nx">deviceId</span> <span class="p">})</span>
+    <span class="p">});</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">((</span><span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">error</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">ticket</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this (201):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"ticket"</span><span class="p">:</span><span class="w"> </span><span class="s2">"kq3V0b1mZ4hY9wT6uR2sXcLp8eNfAa7DgJiOyHtE5vQ"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"expiresIn"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Browsers cannot set headers on a WebSocket, so a website exchanges its access token for a one-time ticket and puts the ticket in the WebSocket URL instead (see <a href="#websites">Websites</a>). Phones do not need tickets.</p>
+
+<p>Each ticket works <strong>once</strong>, within <strong>30 seconds</strong>, for that one device. Get a new ticket for every connection.</p>
+<h3 id='http-request-4'>HTTP Request</h3>
+<p><code>POST https://rt.thruxion.com/v1/ws-tickets</code></p>
+<h3 id='parameters-2'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>deviceId</td>
+<td>yes</td>
+<td>The ID of one of the user&#39;s active devices. Otherwise the API answers <code>403</code> with <code>device_not_allowed</code>.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Tickets are limited to 10 requests in a burst per user, then one every 2 seconds.
+</aside>
+<h1 id='connecting'>Connecting</h1><h2 id='connect-a-phone'>Connect a Phone</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'faye/websocket'</span>
+<span class="nb">require</span> <span class="s1">'eventmachine'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="no">EM</span><span class="p">.</span><span class="nf">run</span> <span class="k">do</span>
+  <span class="n">ws</span> <span class="o">=</span> <span class="no">Faye</span><span class="o">::</span><span class="no">WebSocket</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'wss://rt.thruxion.com/v1/ws'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'rt.v1.json'</span><span class="p">],</span>
+    <span class="ss">headers: </span><span class="p">{</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+               <span class="s1">'X-Device-Id'</span>   <span class="o">=&gt;</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'DEVICE_ID'</span><span class="p">]</span> <span class="p">})</span>
+
+  <span class="n">ws</span><span class="p">.</span><span class="nf">on</span> <span class="ss">:open</span> <span class="k">do</span>
+    <span class="n">ws</span><span class="p">.</span><span class="nf">send</span><span class="p">({</span> <span class="ss">v: </span><span class="mi">1</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'location.update'</span><span class="p">,</span> <span class="ss">id: </span><span class="s1">'m-1'</span><span class="p">,</span>
+              <span class="ss">data: </span><span class="p">{</span> <span class="ss">seq: </span><span class="mi">1</span><span class="p">,</span> <span class="ss">t: </span><span class="p">(</span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">to_f</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">).</span><span class="nf">to_i</span><span class="p">,</span>
+                      <span class="ss">lat: </span><span class="o">-</span><span class="mf">33.4389</span><span class="p">,</span> <span class="ss">lon: </span><span class="o">-</span><span class="mf">70.6475</span><span class="p">,</span> <span class="ss">acc: </span><span class="mi">6</span><span class="p">,</span>
+                      <span class="ss">src: </span><span class="s1">'fused'</span><span class="p">,</span> <span class="ss">mock: </span><span class="kp">false</span> <span class="p">}</span> <span class="p">}.</span><span class="nf">to_json</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">ws</span><span class="p">.</span><span class="nf">on</span> <span class="ss">:message</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+    <span class="nb">puts</span> <span class="n">event</span><span class="p">.</span><span class="nf">data</span> <span class="c1"># {"v":1,"type":"ack","ref":"m-1","data":{"seqs":[1],"rejected":[]}}</span>
+  <span class="k">end</span>
+
+  <span class="n">ws</span><span class="p">.</span><span class="nf">on</span> <span class="ss">:close</span> <span class="k">do</span> <span class="o">|</span><span class="n">event</span><span class="o">|</span>
+    <span class="nb">puts</span> <span class="s2">"closed: </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">code</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">reason</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">EM</span><span class="p">.</span><span class="nf">stop</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">websockets</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">,</span>
+        <span class="s">"X-Device-Id"</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"DEVICE_ID"</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">websockets</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="s">"wss://rt.thruxion.com/v1/ws"</span><span class="p">,</span>
+        <span class="n">subprotocols</span><span class="o">=</span><span class="p">[</span><span class="s">"rt.v1.json"</span><span class="p">],</span>
+        <span class="n">additional_headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">ws</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">ws</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">({</span>
+            <span class="s">"v"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"type"</span><span class="p">:</span> <span class="s">"location.update"</span><span class="p">,</span> <span class="s">"id"</span><span class="p">:</span> <span class="s">"m-1"</span><span class="p">,</span>
+            <span class="s">"data"</span><span class="p">:</span> <span class="p">{</span><span class="s">"seq"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"t"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span>
+                     <span class="s">"lat"</span><span class="p">:</span> <span class="o">-</span><span class="mf">33.4389</span><span class="p">,</span> <span class="s">"lon"</span><span class="p">:</span> <span class="o">-</span><span class="mf">70.6475</span><span class="p">,</span> <span class="s">"acc"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                     <span class="s">"src"</span><span class="p">:</span> <span class="s">"fused"</span><span class="p">,</span> <span class="s">"mock"</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
+        <span class="p">}))</span>
+        <span class="k">print</span><span class="p">(</span><span class="k">await</span> <span class="n">ws</span><span class="p">.</span><span class="n">recv</span><span class="p">())</span>
+
+<span class="n">asyncio</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Type one JSON message per line; the server's replies are printed</span>
+websocat <span class="nt">--protocol</span> rt.v1.json <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"X-Device-Id: </span><span class="nv">$DEVICE_ID</span><span class="s2">"</span> <span class="se">\</span>
+  wss://rt.thruxion.com/v1/ws
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">WebSocket</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">ws</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="dl">'</span><span class="s1">wss://rt.thruxion.com/v1/ws</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">rt.v1.json</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span>
+        <span class="dl">'</span><span class="s1">X-Device-Id</span><span class="dl">'</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DEVICE_ID</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">ws</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">open</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+        <span class="na">v</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">location.update</span><span class="dl">'</span><span class="p">,</span> <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">m-1</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">data</span><span class="p">:</span> <span class="p">{</span> <span class="na">seq</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">t</span><span class="p">:</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">(),</span> <span class="na">lat</span><span class="p">:</span> <span class="o">-</span><span class="mf">33.4389</span><span class="p">,</span> <span class="na">lon</span><span class="p">:</span> <span class="o">-</span><span class="mf">70.6475</span><span class="p">,</span>
+                <span class="na">acc</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="na">src</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fused</span><span class="dl">'</span><span class="p">,</span> <span class="na">mock</span><span class="p">:</span> <span class="kc">false</span> <span class="p">}</span>
+    <span class="p">}));</span>
+<span class="p">});</span>
+
+<span class="nx">ws</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">message</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">()));</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">close</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">reason</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">closed:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">code</span><span class="p">,</span> <span class="nx">reason</span><span class="p">.</span><span class="nx">toString</span><span class="p">()));</span>
+</code></pre></div>
+<blockquote>
+<p>The server answers with an ack:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ack"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m-1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"seqs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="nl">"rejected"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Phones open the WebSocket with their access token and device ID in headers.</p>
+<h3 id='websocket-request'>WebSocket Request</h3>
+<p><code>GET wss://rt.thruxion.com/v1/ws</code></p>
+<h3 id='headers'>Headers</h3>
+<table><thead>
+<tr>
+<th>Header</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Sec-WebSocket-Protocol</td>
+<td>Must offer <code>rt.v1.json</code>. Otherwise the upgrade is refused with <code>400</code>.</td>
+</tr>
+<tr>
+<td>Authorization</td>
+<td><code>Bearer &lt;access token&gt;</code> from the realm <code>field</code>, with the role <code>tracker</code>.</td>
+</tr>
+<tr>
+<td>X-Device-Id</td>
+<td>The device ID from <a href="#register-device">Register Device</a>. The device must belong to the logged-in user and be active.</td>
+</tr>
+<tr>
+<td>Origin</td>
+<td>Must <strong>not</strong> be sent. Requests with an <code>Origin</code> are treated as coming from a website.</td>
+</tr>
+</tbody></table>
+
+<p>If the upgrade is refused, the server answers with a plain HTTP status instead of a WebSocket:</p>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>What the app should do</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Missing subprotocol or malformed device ID</td>
+<td>Fix the request.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Missing, invalid or expired token</td>
+<td>Refresh the token, then retry.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>No <code>tracker</code> role, or the device is unknown, someone else&#39;s or revoked</td>
+<td>Stop; the user must log in again or register the device again.</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too many open connections for this user</td>
+<td>Retry later with backoff.</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Server restarting or a dependency is down</td>
+<td>Retry with backoff.</td>
+</tr>
+</tbody></table>
+
+<p>The server sends a ping frame every 25 seconds. WebSocket libraries (OkHttp, for example) answer it automatically; a client that stops answering is dropped.</p>
+
+<aside class="warning">
+Open only one connection per device. When the same device connects again, the older connection is closed with code <code>4009</code>; do not reconnect from that one.
+</aside>
+<h2 id='message-format'>Message Format</h2>
+<blockquote>
+<p>Every message uses the same envelope:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location.update"</span><span class="p">,</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m-1842"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Messages are JSON text frames of at most 16 KiB. A binary frame closes the connection with <code>1003</code>, a larger frame with <code>1009</code>.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>v</td>
+<td>Protocol version. Always <code>1</code>.</td>
+</tr>
+<tr>
+<td>type</td>
+<td>The message type, for example <code>location.update</code>.</td>
+</tr>
+<tr>
+<td>id</td>
+<td>Chosen by the client: 1–64 characters, letters, digits and <code>_ . : -</code>. The server repeats it as <code>ref</code> in its reply, so you can match replies to messages.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>The message&#39;s content. Its fields depend on <code>type</code>.</td>
+</tr>
+</tbody></table>
+
+<p>Unknown fields are rejected anywhere in a message.</p>
+<h1 id='sending-locations'>Sending Locations</h1><h2 id='location-update'>location.update</h2>
+<blockquote>
+<p>One point:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location.update"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m-1842"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"seq"</span><span class="p">:</span><span class="w"> </span><span class="mi">1842</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"t"</span><span class="p">:</span><span class="w"> </span><span class="mi">1791234606812</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"lat"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.4389</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"lon"</span><span class="p">:</span><span class="w"> </span><span class="mf">-70.6475</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"acc"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"spd"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"brg"</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"alt"</span><span class="p">:</span><span class="w"> </span><span class="mi">570</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"src"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fused"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"mock"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Sends one location fix.</p>
+<h3 id='point-fields'>Point Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>seq</td>
+<td>yes</td>
+<td>A number that increases for every point of this device. Acks refer to it. Integer, 0 or more.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>yes</td>
+<td>When the fix was taken, in epoch milliseconds. Must be within the last 7 days and at most 2 minutes ahead of the server clock.</td>
+</tr>
+<tr>
+<td>lat</td>
+<td>yes</td>
+<td>Latitude, −90 to 90.</td>
+</tr>
+<tr>
+<td>lon</td>
+<td>yes</td>
+<td>Longitude, −180 to 180.</td>
+</tr>
+<tr>
+<td>acc</td>
+<td>yes</td>
+<td>Horizontal accuracy in metres, more than 0 and at most 10 000.</td>
+</tr>
+<tr>
+<td>alt</td>
+<td>no</td>
+<td>Altitude in metres, −1 000 to 20 000.</td>
+</tr>
+<tr>
+<td>spd</td>
+<td>no</td>
+<td>Speed in m/s, 0 to 350.</td>
+</tr>
+<tr>
+<td>brg</td>
+<td>no</td>
+<td>Bearing in degrees, 0 up to (but not including) 360.</td>
+</tr>
+<tr>
+<td>src</td>
+<td>yes</td>
+<td>Location provider: <code>gps</code>, <code>network</code> or <code>fused</code>.</td>
+</tr>
+<tr>
+<td>mock</td>
+<td>yes</td>
+<td>Whether the fix is a mock location (<code>Location.isMock()</code> on Android): <code>true</code> or <code>false</code>.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Never send user or device IDs in a point: the server takes them from the connection.
+</aside>
+
+<p>Phones can send about 1 message per second, with bursts of up to 10. Faster messages get a <code>rate_limited</code> error.</p>
+<h2 id='location-batch'>location.batch</h2>
+<blockquote>
+<p>Points saved while offline:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location.batch"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b-77"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"points"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w"> </span><span class="nl">"seq"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"t"</span><span class="p">:</span><span class="w"> </span><span class="mi">1791234600000</span><span class="p">,</span><span class="w"> </span><span class="nl">"lat"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.4389</span><span class="p">,</span><span class="w"> </span><span class="nl">"lon"</span><span class="p">:</span><span class="w"> </span><span class="mf">-70.6475</span><span class="p">,</span><span class="w"> </span><span class="nl">"acc"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nl">"src"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gps"</span><span class="p">,</span><span class="w"> </span><span class="nl">"mock"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w"> </span><span class="nl">"seq"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"t"</span><span class="p">:</span><span class="w"> </span><span class="mi">1791234605000</span><span class="p">,</span><span class="w"> </span><span class="nl">"lat"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.4391</span><span class="p">,</span><span class="w"> </span><span class="nl">"lon"</span><span class="p">:</span><span class="w"> </span><span class="mf">-70.6472</span><span class="p">,</span><span class="w"> </span><span class="nl">"acc"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nl">"src"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gps"</span><span class="p">,</span><span class="w"> </span><span class="nl">"mock"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Sends points that were saved while the phone was offline: 1 to 100 points, each with a different <code>seq</code>. Each point has the fields of <a href="#location-update">location.update</a>.</p>
+<h1 id='server-replies'>Server Replies</h1><h2 id='ack'>ack</h2>
+<blockquote>
+<p>Ack for a batch, with one point rejected:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ack"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b-77"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"seqs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"rejected"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"seq"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"reason"</span><span class="p">:</span><span class="w"> </span><span class="s2">"too_old"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>The points are safely queued. <code>seqs</code> lists every point of the message, including the rejected ones. Delete all of them from the phone&#39;s buffer: rejected points will never be accepted.</p>
+
+<table><thead>
+<tr>
+<th>Rejection reason</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>too_old</td>
+<td>The fix is more than 7 days old.</td>
+</tr>
+<tr>
+<td>in_future</td>
+<td>The fix is more than 2 minutes ahead of the server clock.</td>
+</tr>
+</tbody></table>
+<h2 id='error'>error</h2>
+<blockquote>
+<p>Error reply:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span><span class="w"> </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m-1842"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rate_limited"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Nothing was stored. Keep the points and send them again later. The error codes are listed in <a href="#websocket-error-codes">WebSocket Error Codes</a>.</p>
+
+<p>After more than 10 invalid or rate-limited messages, the server closes the connection with code <code>1008</code>.</p>
+<h2 id='delivery-rules'>Delivery Rules</h2>
+<p>To lose no points when the network drops:</p>
+
+<ol>
+<li>Save each fix in a local buffer before sending it.</li>
+<li>Delete points from the buffer only when an <code>ack</code> lists their <code>seq</code>.</li>
+<li>After reconnecting, send the buffer with <code>location.batch</code>, oldest first, then continue with live updates.</li>
+<li>Resending a point is harmless: the server stores each (device, fix time) only once.</li>
+</ol>
+<h1 id='keeping-a-connection-alive'>Keeping a Connection Alive</h1>
+<blockquote>
+<ol>
+<li>The server warns about 60 seconds before the token expires:</li>
+</ol>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"session.expiring"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"expiresAt"</span><span class="p">:</span><span class="w"> </span><span class="mi">1791234606812</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<ol>
+<li>The client refreshes its token with Keycloak and sends the new one:</li>
+</ol>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"auth.refresh"</span><span class="p">,</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"r-1"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;new access token&gt;"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<ol>
+<li>The server accepts it:</li>
+</ol>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ack"</span><span class="p">,</span><span class="w"> </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"r-1"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"expiresAt"</span><span class="p">:</span><span class="w"> </span><span class="mi">1791234906812</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Access tokens last 5 minutes, but a connection can stay open for hours by sending a new token over the socket:</p>
+
+<ol>
+<li>About 60 seconds before the token expires, the server sends <code>session.expiring</code> with the expiry time (<code>expiresAt</code>, epoch milliseconds).</li>
+<li>The client refreshes its token with Keycloak and sends it in <code>auth.refresh</code>.</li>
+<li>The server answers <code>ack</code> with the new <code>expiresAt</code>, or <code>error</code> with <code>auth_failed</code> (an invalid token, or a token for another user).</li>
+</ol>
+
+<p>Without a refresh, the connection closes with <code>4001</code> when the token expires.</p>
+
+<p>The server also closes connections with <code>4003</code> when the device is revoked, or when the Keycloak session ends (the user logs out, or an admin ends the session). This happens on every server at once, within about a second.</p>
+<h1 id='websites'>Websites</h1><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// In a web page. See "Get WebSocket Ticket" for getTicket().</span>
+<span class="kd">const</span> <span class="nx">connect</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">deviceId</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">ticket</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getTicket</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">deviceId</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span>
+        <span class="s2">`wss://rt.thruxion.com/v1/ws?ticket=</span><span class="p">${</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">ticket</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
+        <span class="dl">'</span><span class="s1">rt.v1.json</span><span class="dl">'</span>
+    <span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">seq</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">onopen</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nb">navigator</span><span class="p">.</span><span class="nx">geolocation</span><span class="p">.</span><span class="nx">watchPosition</span><span class="p">((</span><span class="nx">pos</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">pos</span><span class="p">.</span><span class="nx">coords</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">accuracy</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span> <span class="c1">// skip very rough fixes</span>
+            <span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+                <span class="na">v</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">location.update</span><span class="dl">'</span><span class="p">,</span> <span class="na">id</span><span class="p">:</span> <span class="s2">`m-</span><span class="p">${</span><span class="nx">seq</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span>
+                <span class="na">data</span><span class="p">:</span> <span class="p">{</span> <span class="na">seq</span><span class="p">:</span> <span class="nx">seq</span><span class="o">++</span><span class="p">,</span> <span class="na">t</span><span class="p">:</span> <span class="nx">pos</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">,</span> <span class="na">lat</span><span class="p">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="na">lon</span><span class="p">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">longitude</span><span class="p">,</span>
+                        <span class="na">acc</span><span class="p">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">accuracy</span><span class="p">,</span> <span class="na">src</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fused</span><span class="dl">'</span><span class="p">,</span> <span class="na">mock</span><span class="p">:</span> <span class="kc">false</span> <span class="p">}</span>
+            <span class="p">}));</span>
+        <span class="p">});</span>
+    <span class="p">};</span>
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">onclose</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">closed:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">code</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Browsers use a ticket instead of headers. To try it from a shell:</span>
+<span class="nv">TICKET</span><span class="o">=</span><span class="si">$(</span>curl <span class="nt">-s</span> <span class="nt">-X</span> POST <span class="s2">"https://rt.thruxion.com/v1/ws-tickets"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Origin: https://app.example.com"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s2">"{</span><span class="se">\"</span><span class="s2">deviceId</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="nv">$DEVICE_ID</span><span class="se">\"</span><span class="s2">}"</span> | jq <span class="nt">-r</span> .ticket<span class="si">)</span>
+
+websocat <span class="nt">--protocol</span> rt.v1.json <span class="nt">-H</span> <span class="s2">"Origin: https://app.example.com"</span> <span class="se">\</span>
+  <span class="s2">"wss://rt.thruxion.com/v1/ws?ticket=</span><span class="nv">$TICKET</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># Websites connect from the browser: see the JavaScript tab.</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="c1"># Websites connect from the browser: see the JavaScript tab.
+</span></code></pre></div>
+<p>A web page can send its browser&#39;s location too, but only from a website that Thruxion has allowed. Requests from any other origin get <code>403</code> (<code>origin_not_allowed</code>). Ask Thruxion to add your website&#39;s exact origins (scheme, host and port, for example <code>https://app.example.com</code>) and its login callback URLs.</p>
+
+<p>Browsers cannot set headers on a WebSocket, so a page uses a one-time ticket instead of <code>Authorization</code> and <code>X-Device-Id</code>:</p>
+
+<ol>
+<li>Log in with the realm <code>field</code>, client <code>rt-web</code> (see <a href="#authentication">Authentication</a>).</li>
+<li>Register the browser once with <a href="#register-device">Register Device</a>, and keep its <code>id</code> in local storage.</li>
+<li>Get a ticket with <a href="#get-websocket-ticket">Get WebSocket Ticket</a>.</li>
+<li>Open <code>wss://rt.thruxion.com/v1/ws?ticket=&lt;ticket&gt;</code>, offering the subprotocol <code>rt.v1.json</code>.</li>
+</ol>
+
+<p>Messages, acks, token refresh and close codes are the same as for phones. What is different in a browser:</p>
+
+<ul>
+<li>Send <code>&quot;src&quot;: &quot;fused&quot;</code> and <code>&quot;mock&quot;: false</code>: browsers name no provider and cannot detect mock locations. The server marks every point that comes from a web page with flag <code>16</code>.</li>
+<li>Skip fixes with an accuracy over 10 000 m (desktop browsers without GPS often report tens of kilometres), and leave out <code>alt</code>, <code>spd</code> and <code>brg</code> when the browser gives <code>null</code> or <code>NaN</code>.</li>
+<li><code>watchPosition</code> can fire several times a second: send at most one fix every 5 seconds. Keep batches to 50 points; a frame over 16 KiB closes the connection (<code>1009</code>).</li>
+<li>A refused upgrade shows up only as close code <code>1006</code>, because browsers hide its HTTP status. Get a new ticket and retry with backoff; the ticket request tells you what is wrong (<code>401</code>: refresh the token; <code>403 device_not_allowed</code>: register the browser again; <code>429</code>: wait).</li>
+<li>Use one connection per device. A second tab with the same device ID closes the first with <code>4009</code>; do not reconnect after <code>4009</code>.</li>
+</ul>
+
+<aside class="warning">
+Keep tokens in memory, never in local storage, cookies or URLs, and refresh them one at a time. Tokens carry no name or email.
+</aside>
+<h1 id='staff'>Staff</h1>
+<aside class="warning">
+The staff side is private. It runs on a separate staff host that is reachable only from the office or the VPN, and needs a token from the realm <code>staff</code>. Requests from a browser must come from the staff dashboard's origin. <code>&lt;staff host&gt;</code> below stands for that host.
+</aside>
+
+<table><thead>
+<tr>
+<th>Role</th>
+<th>Can do</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>developer</td>
+<td>Watch live views, list devices, read location history.</td>
+</tr>
+<tr>
+<td>admin</td>
+<td>Everything a developer can, plus revoke devices and read the audit log.</td>
+</tr>
+</tbody></table>
+
+<p>Every live subscription and history request is recorded in the <a href="#get-audit-log">audit log</a>.</p>
+<h2 id='live-views'>Live Views</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// In the staff dashboard (a web page on the staff host)</span>
+<span class="kd">const</span> <span class="nx">watchFleet</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://&lt;staff host&gt;/v1/ws-tickets</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">ticket</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+
+    <span class="kd">const</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="s2">`wss://&lt;staff host&gt;/v1/ws?ticket=</span><span class="p">${</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">ticket</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span> <span class="dl">'</span><span class="s1">rt.v1.json</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">onopen</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span> <span class="na">v</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">s-1</span><span class="dl">'</span><span class="p">,</span> <span class="na">data</span><span class="p">:</span> <span class="p">{</span> <span class="na">sub</span><span class="p">:</span> <span class="dl">'</span><span class="s1">all</span><span class="dl">'</span><span class="p">,</span> <span class="na">scope</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fleet</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}));</span>
+    <span class="p">};</span>
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">snapshot</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">locations</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">points</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">p</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">deviceId</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">lat</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">lon</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">TICKET</span><span class="o">=</span><span class="si">$(</span>curl <span class="nt">-s</span> <span class="nt">-X</span> POST <span class="s2">"https://&lt;staff host&gt;/v1/ws-tickets"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> | jq <span class="nt">-r</span> .ticket<span class="si">)</span>
+
+<span class="c"># Then type: {"v":1,"type":"subscribe","id":"s-1","data":{"sub":"all","scope":"fleet"}}</span>
+websocat <span class="nt">--protocol</span> rt.v1.json <span class="s2">"wss://&lt;staff host&gt;/v1/ws?ticket=</span><span class="nv">$TICKET</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># Staff connect from the dashboard in the browser: see the JavaScript tab.</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="c1"># Staff connect from the dashboard in the browser: see the JavaScript tab.
+</span></code></pre></div>
+<blockquote>
+<p>Subscribe to the whole fleet, a map area, or one device:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"subscribe"</span><span class="p">,</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s-1"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"sub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"all"</span><span class="p">,</span><span class="w"> </span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fleet"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"subscribe"</span><span class="p">,</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s-2"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"sub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nyc"</span><span class="p">,</span><span class="w"> </span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"area"</span><span class="p">,</span><span class="w"> </span><span class="nl">"bbox"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-74.3</span><span class="p">,</span><span class="w"> </span><span class="mf">40.5</span><span class="p">,</span><span class="w"> </span><span class="mf">-73.7</span><span class="p">,</span><span class="w"> </span><span class="mf">40.95</span><span class="p">]</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"subscribe"</span><span class="p">,</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s-3"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"sub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"one"</span><span class="p">,</span><span class="w"> </span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"device"</span><span class="p">,</span><span class="w"> </span><span class="nl">"deviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Updates for the view &quot;all&quot;:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"locations"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"sub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"all"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"points"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w"> </span><span class="nl">"deviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="p">,</span><span class="w"> </span><span class="nl">"t"</span><span class="p">:</span><span class="w"> </span><span class="mi">1791234606812</span><span class="p">,</span><span class="w">
+              </span><span class="nl">"lat"</span><span class="p">:</span><span class="w"> </span><span class="mf">-33.4389</span><span class="p">,</span><span class="w"> </span><span class="nl">"lon"</span><span class="p">:</span><span class="w"> </span><span class="mf">-70.6475</span><span class="p">,</span><span class="w"> </span><span class="nl">"acc"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nl">"spd"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span><span class="w"> </span><span class="nl">"brg"</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span><span class="w"> </span><span class="nl">"flags"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Staff watch locations live over the private WebSocket. Like websites, they connect with a one-time ticket:</p>
+
+<ol>
+<li><code>POST https://&lt;staff host&gt;/v1/ws-tickets</code> with the staff access token (no body) answers <code>201</code> with <code>{ &quot;ticket&quot;: &quot;…&quot;, &quot;expiresIn&quot;: 30 }</code>.</li>
+<li>Open <code>wss://&lt;staff host&gt;/v1/ws?ticket=&lt;ticket&gt;</code>, offering <code>rt.v1.json</code>.</li>
+</ol>
+
+<p>Each ticket works once and expires after 30 seconds.</p>
+<h3 id='subscribe'>subscribe</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>sub</td>
+<td>Your name for this view, 1–32 characters. Updates carry it. Reusing a name replaces that view.</td>
+</tr>
+<tr>
+<td>scope</td>
+<td><code>fleet</code> (every device), <code>area</code> (devices inside <code>bbox</code>) or <code>device</code> (one device).</td>
+</tr>
+<tr>
+<td>bbox</td>
+<td>For <code>area</code>: <code>[west, south, east, north]</code> in degrees.</td>
+</tr>
+<tr>
+<td>deviceId</td>
+<td>For <code>device</code>: the device ID.</td>
+</tr>
+</tbody></table>
+
+<p>Up to 10 views per connection; one more gets the error <code>too_many_subscriptions</code>. The server answers <code>ack</code> with <code>data.sub</code>, then sends:</p>
+
+<table><thead>
+<tr>
+<th>Message</th>
+<th>When</th>
+<th>Data</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>snapshot</td>
+<td>Right after subscribing</td>
+<td><code>sub</code>, and <code>points</code>: the last known position of every matching device (last 24 hours).</td>
+</tr>
+<tr>
+<td>locations</td>
+<td>Every second, for <code>fleet</code> and <code>area</code> views</td>
+<td><code>sub</code>, and <code>points</code>: the newest position of each device that moved.</td>
+</tr>
+<tr>
+<td>location</td>
+<td>Immediately, for <code>device</code> views</td>
+<td><code>sub</code>, and <code>point</code>.</td>
+</tr>
+</tbody></table>
+
+<p>If a viewer reads more slowly than updates arrive, only the newest point per device is kept for it, so it never falls behind on old positions.</p>
+<h3 id='live-point-fields'>Live Point Fields</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>deviceId</td>
+<td>The device ID.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Fix time, epoch milliseconds.</td>
+</tr>
+<tr>
+<td>lat / lon</td>
+<td>Position.</td>
+</tr>
+<tr>
+<td>acc</td>
+<td>Accuracy in metres.</td>
+</tr>
+<tr>
+<td>spd / brg</td>
+<td>Speed (m/s) and bearing (degrees), when the device sent them.</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>A bitmask of warnings, see below.</td>
+</tr>
+</tbody></table>
+
+<table><thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>Mock location.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Low accuracy (over 500 m).</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Implausible speed.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>The phone&#39;s clock is ahead.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Sent from a web page.</td>
+</tr>
+</tbody></table>
+<h3 id='unsubscribe'>unsubscribe</h3>
+<p><code>{ &quot;v&quot;: 1, &quot;type&quot;: &quot;unsubscribe&quot;, &quot;id&quot;: &quot;u-1&quot;, &quot;data&quot;: { &quot;sub&quot;: &quot;all&quot; } }</code></p>
+
+<p>The server answers <code>ack</code>, or <code>error</code> with <code>unknown_subscription</code> if there is no view with that name.</p>
+<h2 id='list-all-devices'>List All Devices</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://&lt;staff host&gt;/v1/devices?limit=100'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://&lt;staff host&gt;/v1/devices"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s">"limit"</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://&lt;staff host&gt;/v1/devices?limit=100"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">listAllDevices</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">after</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://&lt;staff host&gt;/v1/devices</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">},</span>
+            <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">limit</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="nx">after</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">listAllDevices</span><span class="p">();</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"devices"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"ownerSub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3f6b2c1e-8d4a-4e3b-9f0c-1a2b3c4d5e6f"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pixel 8"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"appVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.4.0"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:00:00.000Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"lastSeenAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T21:14:03.000Z"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"next"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Returns every device, ordered by ID. Role: <code>developer</code> or <code>admin</code>. Besides the fields described in <a href="#register-device">Register Device</a>, each device has <code>ownerSub</code>, the Keycloak user ID of its owner.</p>
+<h3 id='http-request-5'>HTTP Request</h3>
+<p><code>GET https://&lt;staff host&gt;/v1/devices?limit=&lt;LIMIT&gt;&amp;after=&lt;AFTER&gt;</code></p>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>limit</td>
+<td>100</td>
+<td>How many devices to return, 1 to 500.</td>
+</tr>
+<tr>
+<td>after</td>
+<td></td>
+<td>Start after this device ID. When <code>next</code> is not <code>null</code>, pass it here to get the next page.</td>
+</tr>
+</tbody></table>
+<h2 id='get-location-history'>Get Location History</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+
+<span class="n">device_id</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'DEVICE_ID'</span><span class="p">]</span>
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://&lt;staff host&gt;/v1/devices/</span><span class="si">#{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">/locations"</span><span class="p">)</span>
+<span class="n">uri</span><span class="p">.</span><span class="nf">query</span> <span class="o">=</span> <span class="no">URI</span><span class="p">.</span><span class="nf">encode_www_form</span><span class="p">(</span><span class="ss">from: </span><span class="s1">'2026-10-05T20:00:00Z'</span><span class="p">,</span> <span class="ss">to: </span><span class="s1">'2026-10-05T21:00:00Z'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">device_id</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"DEVICE_ID"</span><span class="p">]</span>
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://&lt;staff host&gt;/v1/devices/</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s">/locations"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">"from"</span><span class="p">:</span> <span class="s">"2026-10-05T20:00:00Z"</span><span class="p">,</span> <span class="s">"to"</span><span class="p">:</span> <span class="s">"2026-10-05T21:00:00Z"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://&lt;staff host&gt;/v1/devices/</span><span class="nv">$DEVICE_ID</span><span class="s2">/locations?from=2026-10-05T20:00:00Z&amp;to=2026-10-05T21:00:00Z"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">getHistory</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">deviceId</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s2">`https://&lt;staff host&gt;/v1/devices/</span><span class="p">${</span><span class="nx">deviceId</span><span class="p">}</span><span class="s2">/locations`</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">},</span>
+            <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">from</span><span class="p">:</span> <span class="dl">'</span><span class="s1">2026-10-05T20:00:00Z</span><span class="dl">'</span><span class="p">,</span> <span class="na">to</span><span class="p">:</span> <span class="dl">'</span><span class="s1">2026-10-05T21:00:00Z</span><span class="dl">'</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">getHistory</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DEVICE_ID</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns GeoJSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FeatureCollection"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"deviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:00:00.000Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"to"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T21:00:00.000Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"next"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"features"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Feature"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"geometry"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Point"</span><span class="p">,</span><span class="w"> </span><span class="nl">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-70.6475</span><span class="p">,</span><span class="w"> </span><span class="mf">-33.4389</span><span class="p">]</span><span class="w"> </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"t"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:12:31.812Z"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"receivedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:12:32.104Z"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"acc"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"alt"</span><span class="p">:</span><span class="w"> </span><span class="mi">570</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"spd"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"brg"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"src"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fused"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"mock"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"flags"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Returns a device&#39;s stored points as a GeoJSON <code>FeatureCollection</code>, oldest first. Role: <code>developer</code> or <code>admin</code>. Coordinates are <code>[longitude, latitude]</code>, as GeoJSON requires. Each request is recorded in the audit log (who, which device, which range).</p>
+<h3 id='http-request-6'>HTTP Request</h3>
+<p><code>GET https://&lt;staff host&gt;/v1/devices/&lt;ID&gt;/locations?from=&lt;FROM&gt;&amp;to=&lt;TO&gt;&amp;limit=&lt;LIMIT&gt;</code></p>
+<h3 id='parameters-3'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ID</td>
+<td></td>
+<td>The device ID (in the path). <code>404</code> if there is no such device.</td>
+</tr>
+<tr>
+<td>from</td>
+<td>1 hour ago</td>
+<td>Start of the range: ISO 8601 with an offset (<code>2026-10-05T12:00:00Z</code>) or epoch milliseconds.</td>
+</tr>
+<tr>
+<td>to</td>
+<td>now</td>
+<td>End of the range, in the same formats. The range may be at most 24 hours.</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>1000</td>
+<td>How many points to return, at most 5000.</td>
+</tr>
+</tbody></table>
+
+<p>When <code>next</code> is not <code>null</code> there are more points: repeat the request with <code>from=&lt;next&gt;</code>. History goes back 30 days.</p>
+<h2 id='revoke-device'>Revoke Device</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://&lt;staff host&gt;/v1/devices/</span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'DEVICE_ID'</span><span class="p">]</span><span class="si">}</span><span class="s2">/revoke"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">code</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://&lt;staff host&gt;/v1/devices/</span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'DEVICE_ID'</span><span class="p">]</span><span class="si">}</span><span class="s">/revoke"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">status_code</span><span class="p">)</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://&lt;staff host&gt;/v1/devices/</span><span class="nv">$DEVICE_ID</span><span class="s2">/revoke"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">revoke</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">deviceId</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">`https://&lt;staff host&gt;/v1/devices/</span><span class="p">${</span><span class="nx">deviceId</span><span class="p">}</span><span class="s2">/revoke`</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">revoke</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DEVICE_ID</span><span class="p">);</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns <code>204 No Content</code> with an empty body.</p>
+</blockquote>
+
+<p>Revokes any device. Role: <code>admin</code>. Its WebSocket closes everywhere with code <code>4003</code>, and it can no longer connect. The action is recorded in the audit log.</p>
+<h3 id='http-request-7'>HTTP Request</h3>
+<p><code>POST https://&lt;staff host&gt;/v1/devices/&lt;ID&gt;/revoke</code></p>
+<h3 id='url-parameters-2'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ID</td>
+<td>The device ID. <code>404</code> if there is no such device.</td>
+</tr>
+</tbody></table>
+<h2 id='get-audit-log'>Get Audit Log</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://&lt;staff host&gt;/v1/audit?limit=100'</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="no">ENV</span><span class="p">[</span><span class="s1">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://&lt;staff host&gt;/v1/audit"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Bearer </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s">"limit"</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://&lt;staff host&gt;/v1/audit?limit=100"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">getAudit</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">before</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://&lt;staff host&gt;/v1/audit</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">}</span><span class="s2">`</span> <span class="p">},</span>
+            <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">limit</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="nx">before</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">getAudit</span><span class="p">();</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"events"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1042"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T21:02:11.000Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"actorSub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"actorRealm"</span><span class="p">:</span><span class="w"> </span><span class="s2">"staff"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"history.read"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"deviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7c0e5d0a-3b52-4f4e-9a65-2f1f6f0b9d11"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T20:00:00.000Z"</span><span class="p">,</span><span class="w"> </span><span class="nl">"to"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-05T21:00:00.000Z"</span><span class="p">,</span><span class="w"> </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">312</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"next"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Returns the audit log, newest first. Role: <code>admin</code>. Reading the log is itself recorded.</p>
+<h3 id='http-request-8'>HTTP Request</h3>
+<p><code>GET https://&lt;staff host&gt;/v1/audit?limit=&lt;LIMIT&gt;&amp;before=&lt;BEFORE&gt;</code></p>
+<h3 id='query-parameters-2'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>limit</td>
+<td>100</td>
+<td>How many entries to return, 1 to 500.</td>
+</tr>
+<tr>
+<td>before</td>
+<td></td>
+<td>Return entries older than this entry ID. When <code>next</code> is not <code>null</code>, pass it here to get the next page.</td>
+</tr>
+</tbody></table>
+<h3 id='recorded-actions'>Recorded Actions</h3>
+<table><thead>
+<tr>
+<th>Action</th>
+<th>When</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>device.register</td>
+<td>A device was registered.</td>
+</tr>
+<tr>
+<td>device.revoke</td>
+<td>A device was revoked.</td>
+</tr>
+<tr>
+<td>live.subscribe</td>
+<td>A staff member subscribed to a live view (with its scope and area).</td>
+</tr>
+<tr>
+<td>history.read</td>
+<td>A staff member read a device&#39;s location history (with the range).</td>
+</tr>
+<tr>
+<td>audit.read</td>
+<td>An admin read the audit log.</td>
+</tr>
+</tbody></table>
+
+<p>Entries say who did what, when, to which device, and the scope or range. They never contain coordinates. They are kept for 12 months.</p>
+<h1 id='errors'>Errors</h1><h2 id='rest-errors'>REST Errors</h2>
+<blockquote>
+<p>Error response:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"device_not_allowed"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Validation error:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invalid_request"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"deviceId"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>REST errors carry a short code in <code>error</code>. Validation errors also list the invalid fields in <code>fields</code>.</p>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Error</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td><code>invalid_request</code></td>
+<td>A parameter is missing or invalid. <code>fields</code> says which.</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>invalid_json</code></td>
+<td>The body is not valid JSON.</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>missing_token</code>, <code>invalid_token</code>, <code>expired_token</code></td>
+<td>The token is missing, invalid or expired. Refresh it and retry.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>forbidden</code></td>
+<td>The token lacks the role this endpoint needs.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>origin_not_allowed</code></td>
+<td>The request came from a website that is not allowed.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>device_not_allowed</code></td>
+<td>The ticket was asked for a device that is not one of the user&#39;s active devices.</td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>not_found</code></td>
+<td>No such device, or no such endpoint.</td>
+</tr>
+<tr>
+<td>409</td>
+<td><code>device_limit</code></td>
+<td>The user already has 3 active devices (<code>max</code> says how many are allowed).</td>
+</tr>
+<tr>
+<td>413</td>
+<td><code>too_large</code></td>
+<td>The body is over 8 KB.</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited</code></td>
+<td>Too many requests. Wait for the number of seconds in the <code>Retry-After</code> header.</td>
+</tr>
+<tr>
+<td>500</td>
+<td><code>internal</code></td>
+<td>Server problem. Try again later.</td>
+</tr>
+</tbody></table>
+<h2 id='websocket-error-codes'>WebSocket Error Codes</h2>
+<blockquote>
+<p>Error message on the WebSocket:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w"> </span><span class="nl">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span><span class="w"> </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m-1842"</span><span class="p">,</span><span class="w"> </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invalid_message"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>An <code>error</code> message answers the message whose <code>id</code> is in <code>ref</code>. Nothing from that message was stored.</p>
+
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>invalid_message</td>
+<td>Not valid JSON, or does not match the message&#39;s schema.</td>
+</tr>
+<tr>
+<td>unsupported_type</td>
+<td>Unknown message type, or a type this endpoint does not accept.</td>
+</tr>
+<tr>
+<td>rate_limited</td>
+<td>Sending too fast: about 1 message per second, bursts of 10.</td>
+</tr>
+<tr>
+<td>auth_failed</td>
+<td><code>auth.refresh</code> carried an invalid token, or a token for another user.</td>
+</tr>
+<tr>
+<td>too_many_subscriptions</td>
+<td>A staff connection already has 10 live views.</td>
+</tr>
+<tr>
+<td>unknown_subscription</td>
+<td><code>unsubscribe</code> named a view that does not exist.</td>
+</tr>
+<tr>
+<td>internal</td>
+<td>Server problem. Retry later.</td>
+</tr>
+</tbody></table>
+<h2 id='websocket-close-codes'>WebSocket Close Codes</h2>
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>What the client should do</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1000</td>
+<td>Normal close</td>
+<td>Nothing.</td>
+</tr>
+<tr>
+<td>1003</td>
+<td>A binary frame was sent</td>
+<td>Send text frames only.</td>
+</tr>
+<tr>
+<td>1006</td>
+<td>The connection dropped, or a browser&#39;s upgrade was refused</td>
+<td>Reconnect with backoff. A website gets a new ticket first.</td>
+</tr>
+<tr>
+<td>1008</td>
+<td>Too many invalid or rate-limited messages</td>
+<td>Fix the client, then reconnect with backoff.</td>
+</tr>
+<tr>
+<td>1009</td>
+<td>A frame was larger than 16 KiB</td>
+<td>Send smaller batches.</td>
+</tr>
+<tr>
+<td>1012</td>
+<td>Server restarting</td>
+<td>Reconnect after a random 1–5 second delay.</td>
+</tr>
+<tr>
+<td>1013</td>
+<td>The client reads too slowly</td>
+<td>Reconnect with backoff.</td>
+</tr>
+<tr>
+<td>4001</td>
+<td>Access token expired</td>
+<td>Refresh the token, then reconnect.</td>
+</tr>
+<tr>
+<td>4003</td>
+<td>Device revoked, or the session ended</td>
+<td>Do not retry; the user must log in again.</td>
+</tr>
+<tr>
+<td>4009</td>
+<td>The same device opened a newer connection</td>
+<td>Do not reconnect from this connection.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+Reconnect with exponential backoff and some randomness, so that thousands of phones do not all reconnect at the same moment after a server restart.
+</aside>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="shell">shell</a>
+                <a href="#" data-language-name="ruby">ruby</a>
+                <a href="#" data-language-name="python">python</a>
+                <a href="#" data-language-name="javascript">javascript</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
