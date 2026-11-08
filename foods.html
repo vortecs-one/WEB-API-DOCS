@@ -331,10 +331,25 @@
             <a href="#thruxion-food-api" class="toc-h1 toc-link" data-title="Thruxion - Food API">Thruxion - Food API</a>
           </li>
           <li>
+            <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
+          </li>
+          <li>
             <a href="#products" class="toc-h1 toc-link" data-title="Products">Products</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#get-product-by-barcode" class="toc-h2 toc-link" data-title="Get Product by Barcode">Get Product by Barcode</a>
+                  </li>
+                  <li>
+                    <a href="#create-product" class="toc-h2 toc-link" data-title="Create Product">Create Product</a>
+                  </li>
+                  <li>
+                    <a href="#update-product" class="toc-h2 toc-link" data-title="Update Product">Update Product</a>
+                  </li>
+                  <li>
+                    <a href="#upload-product-photo" class="toc-h2 toc-link" data-title="Upload Product Photo">Upload Product Photo</a>
+                  </li>
+                  <li>
+                    <a href="#ingredients-from-photo" class="toc-h2 toc-link" data-title="Ingredients from Photo">Ingredients from Photo</a>
                   </li>
               </ul>
           </li>
@@ -365,16 +380,55 @@
 
 <p>The Food API looks up packaged food products by their barcode. For each product it returns the name, brand, a photo, the ingredients, the countries where it is sold, whether it is vegan or vegetarian, and its nutrition facts.</p>
 
-<p>The product data comes from <a href="https://world.openfoodfacts.org">Open Food Facts</a>, an open database of food products. A result is only as complete as the product&#39;s entry there.</p>
+<p>The product data comes from <a href="https://world.openfoodfacts.org">Open Food Facts</a>, an open database of food products. A result is only as complete as the product&#39;s entry there. When a product is missing or incomplete, you can <a href="#create-product">add it</a>, <a href="#update-product">complete it</a>, <a href="#upload-product-photo">send photos of it</a> and <a href="#ingredients-from-photo">read its ingredients from a photo</a> through this API.</p>
 
-<p>The documentation has code examples in Shell, Ruby, Python and JavaScript. The JavaScript examples run on Node.js with the <code>axios</code> package.</p>
+<p>The documentation has code examples in Shell, Ruby, Python and JavaScript. The JavaScript examples run on Node.js with the <code>axios</code> package, plus <code>form-data</code> for photo uploads.</p>
 
 <p>Conventions used by every endpoint:</p>
 
 <ul>
-<li>Responses are JSON.</li>
-<li>No token is needed: every endpoint is public.</li>
+<li>Requests and responses are JSON. Photo uploads use <code>multipart/form-data</code>.</li>
+<li>Looking products up needs no token. Adding, changing and photographing products, and reading ingredients from a photo, need a token in the <code>Authorization</code> header, as <code>Bearer &lt;token&gt;</code>. See <a href="#authentication">Authentication</a>.</li>
+<li>Barcodes in the path are digits only, for example an EAN-13 such as <code>3017624010701</code>.</li>
 </ul>
+
+<aside class="warning">
+What you add or change is published on Open Food Facts for everyone to see and reuse: product data under the Open Database License, photos under Creative Commons Attribution-ShareAlike. Send only real product information, and only photos you have the right to share.
+</aside>
+<h1 id='authentication'>Authentication</h1>
+<p>The endpoints that write to Open Food Facts (<a href="#create-product">Create Product</a>, <a href="#update-product">Update Product</a> and <a href="#upload-product-photo">Upload Product Photo</a>), and <a href="#ingredients-from-photo">Ingredients from Photo</a>, need a JSON Web Token (JWT). It is the same token the Humans API gives: get one from the Humans API <a href="humans.html#system-login">System Login</a>, then send it in the <code>Authorization</code> header:</p>
+
+<p><code>Authorization: Bearer &lt;token&gt;</code></p>
+
+<p>Tokens from both system accounts, <strong>admin</strong> and <strong>dev</strong>, are accepted. A token expires after 2 hours; log in again to get a new one.</p>
+
+<p>Your requests reach Open Food Facts through Thruxion&#39;s own Open Food Facts account, so you do not need an Open Food Facts account yourself.</p>
+
+<p>A request with a missing or rejected token gets one of these errors:</p>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Body</th>
+<th>Reason</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>401</td>
+<td><code>{&quot;message&quot;: &quot;Access denied&quot;}</code></td>
+<td>No Authorization header.</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>{&quot;message&quot;: &quot;Invalid Authorization format&quot;}</code></td>
+<td>The header is not <code>Bearer &lt;token&gt;</code>.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>{&quot;message&quot;: &quot;Invalid token&quot;}</code></td>
+<td>The token is invalid or expired.</td>
+</tr>
+</tbody></table>
 <h1 id='products'>Products</h1><h2 id='get-product-by-barcode'>Get Product by Barcode</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
 
@@ -528,7 +582,708 @@ curl <span class="s2">"https://thruxion.com/api/foods/barcode/3017624010701"</sp
 </aside>
 
 <aside class="notice">
-A barcode that Open Food Facts does not know returns <code>404</code> with <code>{"message": "Product not found"}</code>.
+A barcode that Open Food Facts does not know returns <code>404</code> with <code>{"message": "Product not found"}</code>. You can add it with <a href="#create-product">Create Product</a>.
+</aside>
+<h2 id='create-product'>Create Product</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s1">'8412345678905'</span>  <span class="c1"># Replace with the product's barcode</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/foods/barcode/</span><span class="si">#{</span><span class="n">barcode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="ss">name: </span><span class="s1">'Oat and Honey Bar'</span><span class="p">,</span>
+  <span class="ss">brand: </span><span class="s1">'Acme'</span><span class="p">,</span>
+  <span class="ss">quantity: </span><span class="s1">'40 g'</span><span class="p">,</span>
+  <span class="ss">categories: </span><span class="p">[</span><span class="s1">'Snacks'</span><span class="p">,</span> <span class="s1">'Cereal bars'</span><span class="p">],</span>
+  <span class="ss">ingredients: </span><span class="s1">'oat flakes 60%, honey 25%, sunflower oil, salt'</span><span class="p">,</span>
+  <span class="ss">countries: </span><span class="p">[</span><span class="s1">'Spain'</span><span class="p">],</span>
+  <span class="ss">lang: </span><span class="s1">'en'</span><span class="p">,</span>
+  <span class="ss">nutrition_data_per: </span><span class="s1">'100g'</span><span class="p">,</span>
+  <span class="ss">nutriments: </span><span class="p">{</span>
+    <span class="s1">'energy-kcal'</span> <span class="o">=&gt;</span> <span class="mi">410</span><span class="p">,</span>
+    <span class="s1">'fat'</span> <span class="o">=&gt;</span> <span class="mf">12.5</span><span class="p">,</span>
+    <span class="s1">'saturated-fat'</span> <span class="o">=&gt;</span> <span class="mf">1.8</span><span class="p">,</span>
+    <span class="s1">'carbohydrates'</span> <span class="o">=&gt;</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s1">'sugars'</span> <span class="o">=&gt;</span> <span class="mi">24</span><span class="p">,</span>
+    <span class="s1">'fiber'</span> <span class="o">=&gt;</span> <span class="mf">6.5</span><span class="p">,</span>
+    <span class="s1">'proteins'</span> <span class="o">=&gt;</span> <span class="mf">8.2</span><span class="p">,</span>
+    <span class="s1">'salt'</span> <span class="o">=&gt;</span> <span class="mf">0.3</span>
+  <span class="p">}</span>
+<span class="p">}.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s">"8412345678905"</span>  <span class="c1"># Replace with the product's barcode
+</span><span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://thruxion.com/api/foods/barcode/</span><span class="si">{</span><span class="n">barcode</span><span class="si">}</span><span class="s">"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"name"</span><span class="p">:</span> <span class="s">"Oat and Honey Bar"</span><span class="p">,</span>
+    <span class="s">"brand"</span><span class="p">:</span> <span class="s">"Acme"</span><span class="p">,</span>
+    <span class="s">"quantity"</span><span class="p">:</span> <span class="s">"40 g"</span><span class="p">,</span>
+    <span class="s">"categories"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Snacks"</span><span class="p">,</span> <span class="s">"Cereal bars"</span><span class="p">],</span>
+    <span class="s">"ingredients"</span><span class="p">:</span> <span class="s">"oat flakes 60%, honey 25%, sunflower oil, salt"</span><span class="p">,</span>
+    <span class="s">"countries"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Spain"</span><span class="p">],</span>
+    <span class="s">"lang"</span><span class="p">:</span> <span class="s">"en"</span><span class="p">,</span>
+    <span class="s">"nutrition_data_per"</span><span class="p">:</span> <span class="s">"100g"</span><span class="p">,</span>
+    <span class="s">"nutriments"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"energy-kcal"</span><span class="p">:</span> <span class="mi">410</span><span class="p">,</span>
+        <span class="s">"fat"</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span>
+        <span class="s">"saturated-fat"</span><span class="p">:</span> <span class="mf">1.8</span><span class="p">,</span>
+        <span class="s">"carbohydrates"</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+        <span class="s">"sugars"</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s">"fiber"</span><span class="p">:</span> <span class="mf">6.5</span><span class="p">,</span>
+        <span class="s">"proteins"</span><span class="p">:</span> <span class="mf">8.2</span><span class="p">,</span>
+        <span class="s">"salt"</span><span class="p">:</span> <span class="mf">0.3</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Replace 8412345678905 with the product's barcode</span>
+curl <span class="nt">-X</span> POST <span class="s2">"https://thruxion.com/api/foods/barcode/8412345678905"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+    "name": "Oat and Honey Bar",
+    "brand": "Acme",
+    "quantity": "40 g",
+    "categories": ["Snacks", "Cereal bars"],
+    "ingredients": "oat flakes 60%, honey 25%, sunflower oil, salt",
+    "countries": ["Spain"],
+    "lang": "en",
+    "nutrition_data_per": "100g",
+    "nutriments": {
+      "energy-kcal": 410,
+      "fat": 12.5,
+      "saturated-fat": 1.8,
+      "carbohydrates": 64,
+      "sugars": 24,
+      "fiber": 6.5,
+      "proteins": 8.2,
+      "salt": 0.3
+    }
+  }'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">createProduct</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">barcode</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Oat and Honey Bar</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">brand</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Acme</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">quantity</span><span class="p">:</span> <span class="dl">'</span><span class="s1">40 g</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">categories</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">Snacks</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Cereal bars</span><span class="dl">'</span><span class="p">],</span>
+        <span class="na">ingredients</span><span class="p">:</span> <span class="dl">'</span><span class="s1">oat flakes 60%, honey 25%, sunflower oil, salt</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">countries</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">Spain</span><span class="dl">'</span><span class="p">],</span>
+        <span class="na">lang</span><span class="p">:</span> <span class="dl">'</span><span class="s1">en</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">nutrition_data_per</span><span class="p">:</span> <span class="dl">'</span><span class="s1">100g</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">nutriments</span><span class="p">:</span> <span class="p">{</span>
+            <span class="dl">'</span><span class="s1">energy-kcal</span><span class="dl">'</span><span class="p">:</span> <span class="mi">410</span><span class="p">,</span>
+            <span class="na">fat</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span>
+            <span class="dl">'</span><span class="s1">saturated-fat</span><span class="dl">'</span><span class="p">:</span> <span class="mf">1.8</span><span class="p">,</span>
+            <span class="na">carbohydrates</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+            <span class="na">sugars</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+            <span class="na">fiber</span><span class="p">:</span> <span class="mf">6.5</span><span class="p">,</span>
+            <span class="na">proteins</span><span class="p">:</span> <span class="mf">8.2</span><span class="p">,</span>
+            <span class="na">salt</span><span class="p">:</span> <span class="mf">0.3</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/foods/barcode/</span><span class="p">${</span><span class="nx">barcode</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">createProduct</span><span class="p">(</span><span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">8412345678905</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// Replace with the product's barcode</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this (201):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8412345678905"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product created"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://world.openfoodfacts.org/product/8412345678905"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Barcode already in Open Food Facts (409):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product already exists"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8412345678905"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Invalid request (400), for example a misspelled field:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Unknown field(s): nmae. Accepted fields: name, brand, quantity, categories, labels, countries, ingredients, serving_size, nutrition_data_per, nutriments, comment, lang"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint adds a product to Open Food Facts, but only if its barcode is not there yet. To change a product that already exists, use <a href="#update-product">Update Product</a>.</p>
+
+<p>Only <code>name</code> is required, but send what you can read on the package. Open Food Facts calculates more data from it: the Nutri-Score needs the nutrition facts and a category, and the NOVA group, additives and allergens need the ingredients. A <a href="#upload-product-photo">front photo</a> helps other people recognize the product.</p>
+<h3 id='http-request-2'>HTTP Request</h3>
+<p><code>POST https://thruxion.com/api/foods/barcode/&lt;BARCODE&gt;</code></p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>BARCODE</td>
+<td>path</td>
+<td>string</td>
+<td>Yes</td>
+<td>The barcode printed on the product: 8 to 14 digits, for example an EAN-13 or a UPC.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>body</td>
+<td>string</td>
+<td>Yes</td>
+<td>Product name, in the language given by <code>lang</code>.</td>
+</tr>
+<tr>
+<td>brand</td>
+<td>body</td>
+<td>string or array</td>
+<td>No</td>
+<td>Brand. Send several as an array of strings, or as one string separated by commas.</td>
+</tr>
+<tr>
+<td>quantity</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td>Net quantity with its unit, as printed, for example <code>&quot;40 g&quot;</code> or <code>&quot;1 l&quot;</code>.</td>
+</tr>
+<tr>
+<td>categories</td>
+<td>body</td>
+<td>string or array</td>
+<td>No</td>
+<td>Categories, from general to specific, for example <code>[&quot;Snacks&quot;, &quot;Cereal bars&quot;]</code>. Open Food Facts matches them to its own category list.</td>
+</tr>
+<tr>
+<td>labels</td>
+<td>body</td>
+<td>string or array</td>
+<td>No</td>
+<td>Labels and certifications, for example <code>[&quot;Organic&quot;, &quot;Gluten-free&quot;]</code>.</td>
+</tr>
+<tr>
+<td>countries</td>
+<td>body</td>
+<td>string or array</td>
+<td>No</td>
+<td>Countries where the product is sold.</td>
+</tr>
+<tr>
+<td>ingredients</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td>Ingredient list as printed on the package, in the language given by <code>lang</code>.</td>
+</tr>
+<tr>
+<td>serving_size</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td>Size of one serving, for example <code>&quot;40 g&quot;</code>.</td>
+</tr>
+<tr>
+<td>nutrition_data_per</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;100g&quot;</code> if the values in <code>nutriments</code> are per 100 g or 100 ml, <code>&quot;serving&quot;</code> if they are per serving. Send it together with <code>nutriments</code>.</td>
+</tr>
+<tr>
+<td>nutriments</td>
+<td>body</td>
+<td>object</td>
+<td>No</td>
+<td>Nutrition facts, see below.</td>
+</tr>
+<tr>
+<td>lang</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td>Two-letter code of the language <code>name</code> and <code>ingredients</code> are written in, such as <code>en</code> or <code>es</code>. Default <code>en</code>. It also becomes the product&#39;s main language.</td>
+</tr>
+<tr>
+<td>comment</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td>A note shown in the product&#39;s edit history on Open Food Facts.</td>
+</tr>
+</tbody></table>
+
+<p>Any other field is refused with <code>400</code>, so a misspelled name is not silently ignored. Texts can be up to 5000 characters.</p>
+
+<p><code>nutriments</code> uses the Open Food Facts nutrient names, the same as in the <a href="#get-product-by-barcode">Get Product by Barcode</a> answer but without the <code>_100g</code> ending:</p>
+
+<ul>
+<li><code>&lt;nutrient&gt;</code>: the amount, as a number of 0 or more. Common names are <code>energy-kcal</code>, <code>energy-kj</code>, <code>fat</code>, <code>saturated-fat</code>, <code>carbohydrates</code>, <code>sugars</code>, <code>fiber</code>, <code>proteins</code>, <code>salt</code> and <code>sodium</code>.</li>
+<li><code>&lt;nutrient&gt;_unit</code>: optional unit for that amount, for example <code>&quot;sodium_unit&quot;: &quot;mg&quot;</code>. Without it, the default unit is used: grams for nutrients, kJ for <code>energy-kj</code> and kcal for <code>energy-kcal</code>.</li>
+</ul>
+<h3 id='response-2'>Response</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>barcode</td>
+<td>string</td>
+<td>The barcode from the request.</td>
+</tr>
+<tr>
+<td>message</td>
+<td>string</td>
+<td><code>&quot;Product created&quot;</code>.</td>
+</tr>
+<tr>
+<td>url</td>
+<td>string</td>
+<td>The product&#39;s page on Open Food Facts.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+The new product is right away returned by <a href="#get-product-by-barcode">Get Product by Barcode</a>. Values calculated by Open Food Facts, such as <code>vegan</code> and <code>vegetarian</code>, are based on what you sent.
+</aside>
+<h2 id='update-product'>Update Product</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s1">'8412345678905'</span>  <span class="c1"># Replace with the product's barcode</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/foods/barcode/</span><span class="si">#{</span><span class="n">barcode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Patch</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="ss">quantity: </span><span class="s1">'45 g'</span><span class="p">,</span>
+  <span class="ss">labels: </span><span class="p">[</span><span class="s1">'Organic'</span><span class="p">],</span>
+  <span class="ss">comment: </span><span class="s1">'New package size'</span>
+<span class="p">}.</span><span class="nf">to_json</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s">"8412345678905"</span>  <span class="c1"># Replace with the product's barcode
+</span><span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://thruxion.com/api/foods/barcode/</span><span class="si">{</span><span class="n">barcode</span><span class="si">}</span><span class="s">"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"quantity"</span><span class="p">:</span> <span class="s">"45 g"</span><span class="p">,</span>
+    <span class="s">"labels"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Organic"</span><span class="p">],</span>
+    <span class="s">"comment"</span><span class="p">:</span> <span class="s">"New package size"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">patch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Replace 8412345678905 with the product's barcode</span>
+curl <span class="nt">-X</span> PATCH <span class="s2">"https://thruxion.com/api/foods/barcode/8412345678905"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+    "quantity": "45 g",
+    "labels": ["Organic"],
+    "comment": "New package size"
+  }'</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">updateProduct</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">barcode</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">quantity</span><span class="p">:</span> <span class="dl">'</span><span class="s1">45 g</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">labels</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">Organic</span><span class="dl">'</span><span class="p">],</span>
+        <span class="na">comment</span><span class="p">:</span> <span class="dl">'</span><span class="s1">New package size</span><span class="dl">'</span>
+    <span class="p">};</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">patch</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/foods/barcode/</span><span class="p">${</span><span class="nx">barcode</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">updateProduct</span><span class="p">(</span><span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">8412345678905</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// Replace with the product's barcode</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8412345678905"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product updated"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"updated"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"quantity"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"labels"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Barcode not in Open Food Facts (404):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product not found"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint changes a product that is already in Open Food Facts, for example to add the nutrition facts or the ingredients that are missing. Send only the fields you want to change. To add a product that is not there yet, use <a href="#create-product">Create Product</a>.</p>
+<h3 id='http-request-3'>HTTP Request</h3>
+<p><code>PATCH https://thruxion.com/api/foods/barcode/&lt;BARCODE&gt;</code></p>
+<h3 id='parameters-2'>Parameters</h3>
+<p>The fields are the same as for <a href="#create-product">Create Product</a>, but none is required: send at least one of <code>name</code>, <code>brand</code>, <code>quantity</code>, <code>categories</code>, <code>labels</code>, <code>countries</code>, <code>ingredients</code>, <code>serving_size</code>, <code>nutrition_data_per</code> or <code>nutriments</code>. You can add <code>comment</code> to explain the change.</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>BARCODE</td>
+<td>path</td>
+<td>string</td>
+<td>Yes</td>
+<td>The barcode printed on the product: 8 to 14 digits.</td>
+</tr>
+<tr>
+<td>lang</td>
+<td>body</td>
+<td>string</td>
+<td>No</td>
+<td>Two-letter code of the language <code>name</code> and <code>ingredients</code> are written in. Default: the product&#39;s main language. The main language itself does not change.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+Every field you send replaces the value Open Food Facts has. For <code>brand</code>, <code>categories</code>, <code>labels</code> and <code>countries</code>, send the complete list, not only the new items. If you change <code>nutrition_data_per</code>, send all of the nutrition facts again, so that values per 100 g and per serving are not mixed.
+</aside>
+<h3 id='response-3'>Response</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>barcode</td>
+<td>string</td>
+<td>The barcode from the request.</td>
+</tr>
+<tr>
+<td>message</td>
+<td>string</td>
+<td><code>&quot;Product updated&quot;</code>.</td>
+</tr>
+<tr>
+<td>updated</td>
+<td>array of strings</td>
+<td>The fields that were sent to Open Food Facts, without <code>lang</code> and <code>comment</code>.</td>
+</tr>
+</tbody></table>
+<h2 id='upload-product-photo'>Upload Product Photo</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s1">'8412345678905'</span>  <span class="c1"># Replace with the product's barcode</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/foods/barcode/</span><span class="si">#{</span><span class="n">barcode</span><span class="si">}</span><span class="s2">/images"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Post</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">set_form</span><span class="p">(</span>
+  <span class="p">[[</span><span class="s1">'type'</span><span class="p">,</span> <span class="s1">'front'</span><span class="p">],</span>
+   <span class="p">[</span><span class="s1">'lang'</span><span class="p">,</span> <span class="s1">'en'</span><span class="p">],</span>
+   <span class="p">[</span><span class="s1">'image'</span><span class="p">,</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s1">'front.jpg'</span><span class="p">),</span> <span class="p">{</span> <span class="ss">filename: </span><span class="s1">'front.jpg'</span><span class="p">,</span> <span class="ss">content_type: </span><span class="s1">'image/jpeg'</span> <span class="p">}]],</span>
+  <span class="s1">'multipart/form-data'</span>
+<span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s">"8412345678905"</span>  <span class="c1"># Replace with the product's barcode
+</span><span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://thruxion.com/api/foods/barcode/</span><span class="si">{</span><span class="n">barcode</span><span class="si">}</span><span class="s">/images"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"type"</span><span class="p">:</span> <span class="s">"front"</span><span class="p">,</span>
+    <span class="s">"lang"</span><span class="p">:</span> <span class="s">"en"</span>
+<span class="p">}</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"image"</span><span class="p">:</span> <span class="p">(</span><span class="s">"front.jpg"</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">"front.jpg"</span><span class="p">,</span> <span class="s">"rb"</span><span class="p">),</span> <span class="s">"image/jpeg"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Replace 8412345678905 with the product's barcode</span>
+curl <span class="nt">-X</span> POST <span class="s2">"https://thruxion.com/api/foods/barcode/8412345678905/images"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span> <span class="se">\</span>
+  <span class="nt">-F</span> <span class="s2">"type=front"</span> <span class="se">\</span>
+  <span class="nt">-F</span> <span class="s2">"lang=en"</span> <span class="se">\</span>
+  <span class="nt">-F</span> <span class="s2">"image=@front.jpg;type=image/jpeg"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">FormData</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">form-data</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">uploadProductPhoto</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">barcode</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">form</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormData</span><span class="p">();</span>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">'</span><span class="s1">type</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">front</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">'</span><span class="s1">lang</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">en</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">'</span><span class="s1">image</span><span class="dl">'</span><span class="p">,</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span><span class="dl">'</span><span class="s1">front.jpg</span><span class="dl">'</span><span class="p">),</span> <span class="p">{</span> <span class="na">contentType</span><span class="p">:</span> <span class="dl">'</span><span class="s1">image/jpeg</span><span class="dl">'</span> <span class="p">});</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/foods/barcode/</span><span class="p">${</span><span class="nx">barcode</span><span class="p">}</span><span class="s2">/images`</span><span class="p">,</span> <span class="nx">form</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="p">...</span><span class="nx">form</span><span class="p">.</span><span class="nx">getHeaders</span><span class="p">(),</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">uploadProductPhoto</span><span class="p">(</span><span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">8412345678905</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// Replace with the product's barcode</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this (201):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8412345678905"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"front"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"imagefield"</span><span class="p">:</span><span class="w"> </span><span class="s2">"front_en"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"imgid"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Image uploaded"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Photo refused by Open Food Facts (502):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Open Food Facts rejected the request"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"details"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This picture has already been sent."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint sends a photo of a product to Open Food Facts. Send it as <code>multipart/form-data</code>. The product must already be in Open Food Facts; add it first with <a href="#create-product">Create Product</a> if it is not.</p>
+
+<p>Photos are the most useful thing to send: Open Food Facts volunteers and its automatic text recognition read them to fill in the data that is still missing. Take each photo straight on, in focus, with the whole panel visible.</p>
+<h3 id='http-request-4'>HTTP Request</h3>
+<p><code>POST https://thruxion.com/api/foods/barcode/&lt;BARCODE&gt;/images</code></p>
+<h3 id='parameters-3'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>BARCODE</td>
+<td>path</td>
+<td>string</td>
+<td>Yes</td>
+<td>The barcode printed on the product: 8 to 14 digits.</td>
+</tr>
+<tr>
+<td>image</td>
+<td>form</td>
+<td>file</td>
+<td>Yes</td>
+<td>The photo: JPEG, PNG or GIF, up to 10 MB and at least 640 × 160 pixels.</td>
+</tr>
+<tr>
+<td>type</td>
+<td>form</td>
+<td>string</td>
+<td>Yes</td>
+<td>What the photo shows: <code>front</code>, <code>ingredients</code>, <code>nutrition</code> (the nutrition facts table), <code>packaging</code> (recycling information) or <code>other</code>.</td>
+</tr>
+<tr>
+<td>lang</td>
+<td>form</td>
+<td>string</td>
+<td>No</td>
+<td>Two-letter code of the language of the text on the photo. Default <code>en</code>. Not used for <code>other</code>.</td>
+</tr>
+</tbody></table>
+<h3 id='response-4'>Response</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>barcode</td>
+<td>string</td>
+<td>The barcode from the request.</td>
+</tr>
+<tr>
+<td>type</td>
+<td>string</td>
+<td>The <code>type</code> from the request.</td>
+</tr>
+<tr>
+<td>imagefield</td>
+<td>string</td>
+<td>Where Open Food Facts stores the photo: <code>type</code> and language together, such as <code>front_en</code>, or <code>other</code>.</td>
+</tr>
+<tr>
+<td>imgid</td>
+<td>integer</td>
+<td>Number of the photo among all photos of the product on Open Food Facts.</td>
+</tr>
+<tr>
+<td>message</td>
+<td>string</td>
+<td><code>&quot;Image uploaded&quot;</code>.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+Open Food Facts checks the photo itself, and can refuse one that is too small or that was already sent. The API then answers <code>502</code> and gives Open Food Facts' reason in <code>details</code>. Sending a new photo of a type that already has one keeps the old photo too.
+</aside>
+<h2 id='ingredients-from-photo'>Ingredients from Photo</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s1">'3017624010701'</span>  <span class="c1"># Replace with the product's barcode</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s2">"https://thruxion.com/api/foods/barcode/</span><span class="si">#{</span><span class="n">barcode</span><span class="si">}</span><span class="s2">/ingredients-from-photo?lang=en"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">::</span><span class="no">Get</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s1">'Bearer YOUR_JWT_TOKEN'</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="n">uri</span><span class="p">.</span><span class="nf">hostname</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="nf">port</span><span class="p">,</span> <span class="ss">use_ssl: </span><span class="kp">true</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">http</span><span class="o">|</span> <span class="n">http</span><span class="p">.</span><span class="nf">request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">barcode</span> <span class="o">=</span> <span class="s">"3017624010701"</span>  <span class="c1"># Replace with the product's barcode
+</span><span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"https://thruxion.com/api/foods/barcode/</span><span class="si">{</span><span class="n">barcode</span><span class="si">}</span><span class="s">/ingredients-from-photo"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer YOUR_JWT_TOKEN"</span><span class="p">}</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">"lang"</span><span class="p">:</span> <span class="s">"en"</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Replace 3017624010701 with the product's barcode</span>
+curl <span class="s2">"https://thruxion.com/api/foods/barcode/3017624010701/ingredients-from-photo?lang=en"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer YOUR_JWT_TOKEN"</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">ingredientsFromPhoto</span> <span class="o">=</span> <span class="k">async</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">barcode</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s2">`https://thruxion.com/api/foods/barcode/</span><span class="p">${</span><span class="nx">barcode</span><span class="p">}</span><span class="s2">/ingredients-from-photo`</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">Authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">token</span><span class="p">}</span><span class="s2">`</span> <span class="p">},</span>
+            <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">lang</span><span class="p">:</span> <span class="dl">'</span><span class="s1">en</span><span class="dl">'</span> <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">ingredientsFromPhoto</span><span class="p">(</span><span class="dl">'</span><span class="s1">YOUR_JWT_TOKEN</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">3017624010701</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// Replace with the product's barcode</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3017624010701"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"lang"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ingredients"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sugar, Palm Oil, HAZELNUTS (13%), Skimmed MILK Powder (8.7%), Fat-Reduced Cocoa (7.4%), Emulsifier: Lecithins (SOYA), Vanillin. Gluten free. SUITABLE FOR VEGETARIANS."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ocr"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>No ingredients photo in the requested language (404):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No ingredients photo in es"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"en"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint reads the ingredient list from the product&#39;s ingredients photo with text recognition (OCR), run by Open Food Facts. It is the quickest way to fill in missing ingredients: <a href="#upload-product-photo">upload a photo</a> with <code>type=ingredients</code>, call this endpoint, check the text, then save it with <a href="#update-product">Update Product</a>, sending it as <code>ingredients</code> with the same <code>lang</code>.</p>
+
+<p>This endpoint saves nothing: the product on Open Food Facts stays as it is.</p>
+<h3 id='http-request-5'>HTTP Request</h3>
+<p><code>GET https://thruxion.com/api/foods/barcode/&lt;BARCODE&gt;/ingredients-from-photo</code></p>
+<h3 id='parameters-4'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>BARCODE</td>
+<td>path</td>
+<td>string</td>
+<td>Yes</td>
+<td>The barcode printed on the product: 8 to 14 digits.</td>
+</tr>
+<tr>
+<td>lang</td>
+<td>query</td>
+<td>string</td>
+<td>No</td>
+<td>Two-letter code of the language of the ingredients photo to read, such as <code>en</code>. Default: the product&#39;s main language if it has an ingredients photo in it, otherwise the first language that has one.</td>
+</tr>
+</tbody></table>
+<h3 id='response-5'>Response</h3>
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>barcode</td>
+<td>string</td>
+<td>The barcode from the request.</td>
+</tr>
+<tr>
+<td>lang</td>
+<td>string</td>
+<td>The language of the photo that was read.</td>
+</tr>
+<tr>
+<td>ingredients</td>
+<td>string</td>
+<td>The text read from the photo.</td>
+</tr>
+<tr>
+<td>source</td>
+<td>string</td>
+<td>Always <code>&quot;ocr&quot;</code>: the text was read by a machine, not typed by a person.</td>
+</tr>
+</tbody></table>
+
+<p>A product without an ingredients photo, or without one in the requested <code>lang</code>, gets <code>404</code> with the languages that do have one in <code>available</code>. If no text can be read from the photo, the answer is <code>502</code>, with the reason in <code>details</code>.</p>
+
+<aside class="warning">
+The text is read by a machine and can contain mistakes, such as misread words or text from around the ingredient list. Check it against the package before saving it, and do not translate it: save it in the language of the photo.
 </aside>
 <h1 id='health'>Health</h1>
 <p>Check whether the API is running.</p>
@@ -568,7 +1323,7 @@ A barcode that Open Food Facts does not know returns <code>404</code> with <code
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>This endpoint answers <code>200</code> while the API is running. It needs no token.</p>
-<h3 id='http-request-2'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://thruxion.com/api/foods/health</code></p>
 <h2 id='service-status'>Service Status</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 <span class="nb">require</span> <span class="s1">'json'</span>
@@ -607,7 +1362,7 @@ A barcode that Open Food Facts does not know returns <code>404</code> with <code
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>This endpoint returns the name of the service and whether it is running. It needs no token.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET https://thruxion.com/api/foods/</code></p>
 <h1 id='errors'>Errors</h1>
 <blockquote>
@@ -615,6 +1370,14 @@ A barcode that Open Food Facts does not know returns <code>404</code> with <code
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product not found"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Open Food Facts refused a change (502):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Open Food Facts rejected the request"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"details"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This picture has already been sent."</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>The Food API uses the following status codes:</p>
@@ -626,16 +1389,44 @@ A barcode that Open Food Facts does not know returns <code>404</code> with <code
 </tr>
 </thead><tbody>
 <tr>
+<td>400</td>
+<td>Bad Request -- The request is not valid: a barcode that is not 8 to 14 digits, an unknown or wrongly typed field, malformed JSON, or a photo that is missing, too large or not JPEG, PNG or GIF. <code>message</code> says what to fix.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized -- The <code>Authorization</code> header is missing or is not <code>Bearer &lt;token&gt;</code>. See <a href="#authentication">Authentication</a>.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- The token is invalid or expired.</td>
+</tr>
+<tr>
 <td>404</td>
-<td>Not Found -- Open Food Facts has no product with that barcode.</td>
+<td>Not Found -- Open Food Facts has no product with that barcode, or, for <a href="#ingredients-from-photo">Ingredients from Photo</a>, the product has no ingredients photo in that language.</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict -- <a href="#create-product">Create Product</a> was called for a barcode that Open Food Facts already has. Use <a href="#update-product">Update Product</a> instead.</td>
+</tr>
+<tr>
+<td>413</td>
+<td>Payload Too Large -- The JSON body is larger than 100 KB.</td>
 </tr>
 <tr>
 <td>500</td>
-<td>Internal Server Error -- The product could not be retrieved, for example because Open Food Facts could not be reached. Try again later.</td>
+<td>Internal Server Error -- The request could not be completed, for example because Open Food Facts could not be reached. Try again later.</td>
+</tr>
+<tr>
+<td>502</td>
+<td>Bad Gateway -- Open Food Facts received the change but refused it. Its reason is in <code>details</code>.</td>
 </tr>
 </tbody></table>
 
-<p>Errors carry a short text in <code>message</code>.</p>
+<p>Errors carry a short text in <code>message</code>. A <code>502</code> also has <code>details</code>, with the reason given by Open Food Facts.</p>
+
+<aside class="notice">
+When you retry after a <code>500</code>, wait a few seconds first and wait longer after each new failure. Do not retry a <code>4xx</code> or a <code>502</code> unchanged: fix the request first.
+</aside>
 
 <aside class="warning">
 A path that does not exist, such as a misspelled endpoint, returns an HTML error page ("Cannot GET …") with status <code>404</code> instead of JSON.
