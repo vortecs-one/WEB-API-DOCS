@@ -35,6 +35,14 @@ Status Code | Error | Meaning
 429 | `rate_limited` | Too many requests. Wait for the number of seconds in the `Retry-After` header.
 500 | `internal` | Server problem. Try again later.
 
+## Login Errors
+
+The [HumanAPI login](#log-in-with-a-humanapi-account) is answered by Keycloak, not by the REST API, so its errors use the OAuth format (`error` and `error_description`).
+
+Status Code | Error | Meaning
+----------- | ----- | -------
+400 | `invalid_grant` | Wrong email, platform or password, an account that is not active in HumanAPI, or an account locked after repeated wrong passwords. Use the Keycloak login page instead.
+
 ## WebSocket Error Codes
 
 > Error message on the WebSocket:

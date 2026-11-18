@@ -54,7 +54,12 @@ Conventions used everywhere:
 
 # Authentication
 
-Access tokens come from Thruxion's Keycloak server, using OpenID Connect (authorization code flow with PKCE S256). The password is typed only on the Keycloak login page, never in your app or website.
+Access tokens come from Thruxion's Keycloak server, using OpenID Connect. There are two ways to log a user in on the public host:
+
+* **Keycloak login page** (authorization code flow with PKCE S256). The password is typed only on the Keycloak page, never in your app or website.
+* **HumanAPI account**: an app or website that has just logged its user in to Thruxion HumanAPI logs them in here with the same email and password, without a second login page. See [Log In with a HumanAPI Account](#log-in-with-a-humanapi-account).
+
+The staff dashboard only uses the first way.
 
 Who | Realm (issuer) | Client | Role needed
 --- | -------------- | ------ | -----------
@@ -62,7 +67,7 @@ Android app | `https://rt.thruxion.com/realms/field` | `rt-android` | `tracker`
 Website | `https://rt.thruxion.com/realms/field` | `rt-web` | `tracker`
 Staff dashboard | `https://<staff host>/realms/staff` | `rt-dashboard` | `developer` or `admin`
 
-The OpenID configuration of a realm is at `<issuer>/.well-known/openid-configuration`. All clients are public (there is no client secret) and the password grant is disabled, so use an OpenID Connect library such as AppAuth on Android or `oidc-client-ts` in a browser.
+The OpenID configuration of a realm is at `<issuer>/.well-known/openid-configuration`. All clients are public (there is no client secret). For the Keycloak login page use an OpenID Connect library such as AppAuth on Android or `oidc-client-ts` in a browser. The password grant is enabled only on `rt-android` and `rt-web` (for HumanAPI logins); it is disabled on the staff client `rt-dashboard`.
 
 Access tokens last **5 minutes**. Refresh them with the refresh token before they expire. A WebSocket can stay open much longer: see [Keeping a Connection Alive](#keeping-a-connection-alive).
 
@@ -72,6 +77,143 @@ The examples on this page read the access token from <code>$TOKEN</code> (or <co
 
 <aside class="warning">
 Keep tokens in memory, never in local storage, cookies or URLs. Each refresh token works only once: if one is used twice, Keycloak ends the whole session.
+</aside>
+
+## Log In with a HumanAPI Account
+
+```shell
+curl -X POST "https://rt.thruxion.com/realms/field/protocol/openid-connect/token" \
+  -d grant_type=password \
+  -d client_id=rt-android \
+  -d scope="openid offline_access" \
+  --data-urlencode "username=app-thruxion:ana@example.com" \
+  --data-urlencode "password=$HUMANAPI_PASSWORD"
+```
+
+```ruby
+require 'net/http'
+require 'json'
+
+uri = URI('https://rt.thruxion.com/realms/field/protocol/openid-connect/token')
+res = Net::HTTP.post_form(uri,
+  'grant_type' => 'password',
+  'client_id'  => 'rt-android',
+  'scope'      => 'openid offline_access',
+  'username'   => 'app-thruxion:ana@example.com',
+  'password'   => ENV['HUMANAPI_PASSWORD'])
+
+tokens = JSON.parse(res.body)
+puts tokens['access_token'] || tokens
+```
+
+```python
+import os
+import requests
+
+url = "https://rt.thruxion.com/realms/field/protocol/openid-connect/token"
+data = {
+    "grant_type": "password",
+    "client_id": "rt-android",
+    "scope": "openid offline_access",
+    "username": "app-thruxion:ana@example.com",
+    "password": os.environ["HUMANAPI_PASSWORD"],
+}
+
+response = requests.post(url, data=data)  # form-encoded, not JSON
+print(response.status_code, response.json())
+```
+
+```javascript
+const axios = require('axios');
+
+const login = async () => {
+    try {
+        const response = await axios.post(
+            'https://rt.thruxion.com/realms/field/protocol/openid-connect/token',
+            new URLSearchParams({
+                grant_type: 'password',
+                client_id: 'rt-web',          // 'rt-android' for the app
+                scope: 'openid',              // 'openid offline_access' for the app
+                username: 'app-thruxion:ana@example.com',
+                password: process.env.HUMANAPI_PASSWORD,
+            })
+        );
+        console.log(response.data.access_token);
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+    }
+};
+
+login();
+```
+
+> The above command returns JSON structured like this (200; other standard OpenID fields are left out):
+
+```json
+{
+    "access_token": "<access token>",
+    "expires_in": 300,
+    "refresh_token": "<refresh token>",
+    "token_type": "Bearer"
+}
+```
+
+> A wrong email, platform or password, or an account that is not active in HumanAPI (400):
+
+```json
+{
+    "error": "invalid_grant",
+    "error_description": "Invalid user credentials"
+}
+```
+
+An app or website that has just logged its user in to Thruxion HumanAPI can log them in here too with the same email and password, without showing a second login page. The result is the same as after the Keycloak login page: an access token (5 minutes) and a refresh token. Everything else in this documentation works unchanged: registering a device, tickets, the WebSocket and [token refresh](#keeping-a-connection-alive).
+
+### HTTP Request
+
+`POST https://rt.thruxion.com/realms/field/protocol/openid-connect/token`
+
+Send the body as `application/x-www-form-urlencoded`, not JSON.
+
+### Parameters
+
+Parameter | Required | Description
+--------- | -------- | -----------
+grant_type | yes | Always `password`.
+client_id | yes | `rt-android` for the app, `rt-web` for a website.
+username | yes | The account's email, or `platform:email` (see below).
+password | yes | The HumanAPI password.
+scope | no | `openid offline_access` for the app, `openid` for a website.
+
+### Username
+
+HumanAPI accounts are unique per email **and** platform, so the username can name both. Case does not matter.
+
+You send | Account used
+-------- | ------------
+`ana@example.com` | The Thruxion account (`app-thruxion`). If there is none, the email's only active account on any platform. An email with several accounts and none on `app-thruxion` must use `platform:email`.
+`app-thruxion:ana@example.com` | Exactly that platform's account.
+`:ana@example.com` | The account that has no platform.
+
+The same usernames work on the Keycloak login page.
+
+### Errors
+
+Status | Error | Meaning
+------ | ----- | -------
+400 | `invalid_grant` | Wrong email, platform or password, or the account is not active in HumanAPI. Fall back to the Keycloak login page, where the same usernames work.
+400 | `invalid_grant` | After 10 wrong passwords in a row, or 2 within one second, the account is locked for a while. The answer can look the same as a wrong password, so stop retrying.
+
+<aside class="warning">
+Send the password only in this request, right after the HumanAPI login, and never store it. Afterwards use the refresh token like with any other login.
+</aside>
+
+<aside class="notice">
+HumanAPI's own tokens (<code>/auth/system-login</code>) are not accepted here: one system token is shared by every caller, so it says nothing about who is sending.
+</aside>
+
+<aside class="notice">
+If the account is disabled in HumanAPI, its next token refresh fails and its open WebSocket closes within 5 minutes (<code>4001</code>). Log in again after the account is enabled.
 </aside>
 
 # Devices
@@ -678,7 +820,7 @@ Access tokens last 5 minutes, but a connection can stay open for hours by sendin
 2. The client refreshes its token with Keycloak and sends it in `auth.refresh`.
 3. The server answers `ack` with the new `expiresAt`, or `error` with `auth_failed` (an invalid token, or a token for another user).
 
-Without a refresh, the connection closes with `4001` when the token expires.
+Without a refresh, the connection closes with `4001` when the token expires. For a HumanAPI login this also happens when the account is disabled in HumanAPI: Keycloak refuses its next refresh, so the connection ends within 5 minutes.
 
 The server also closes connections with `4003` when the device is revoked, or when the Keycloak session ends (the user logs out, or an admin ends the session). This happens on every server at once, within about a second.
 
@@ -733,7 +875,7 @@ A web page can send its browser's location too, but only from a website that Thr
 
 Browsers cannot set headers on a WebSocket, so a page uses a one-time ticket instead of `Authorization` and `X-Device-Id`:
 
-1. Log in with the realm `field`, client `rt-web` (see [Authentication](#authentication)).
+1. Log in with the realm `field`, client `rt-web` (see [Authentication](#authentication)). A website that has already logged its user in to HumanAPI can use the same email and password directly with `scope=openid`: see [Log In with a HumanAPI Account](#log-in-with-a-humanapi-account).
 2. Register the browser once with [Register Device](#register-device), and keep its `id` in local storage.
 3. Get a ticket with [Get WebSocket Ticket](#get-websocket-ticket).
 4. Open `wss://rt.thruxion.com/v1/ws?ticket=<ticket>`, offering the subprotocol `rt.v1.json`.
@@ -749,6 +891,197 @@ Messages, acks, token refresh and close codes are the same as for phones. What i
 <aside class="warning">
 Keep tokens in memory, never in local storage, cookies or URLs, and refresh them one at a time. Tokens carry no name or email.
 </aside>
+
+## Complete Browser Example
+
+```html
+<!doctype html>
+<!--
+  Minimal browser test: log in on the Keycloak page, then send a location over the
+  WebSocket and print the server's answer. No libraries needed.
+  Serve it with:  python3 -m http.server 5173 --bind 127.0.0.1
+  and open http://localhost:5173/
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>RT browser test</title>
+  </head>
+  <body style="font-family: system-ui, sans-serif; max-width: 640px; margin: 24px auto; padding: 0 16px">
+    <h1>RT browser test</h1>
+    <button id="login" type="button">1. Log in</button>
+    <button id="send" type="button" disabled>2. Send my location</button>
+    <button id="test" type="button" disabled>3. Send a test point (no location needed)</button>
+    <pre id="log" style="background: #f3f4f6; padding: 12px; white-space: pre-wrap"></pre>
+
+    <script type="module">
+      const SERVER = 'https://rt.thruxion.com';
+      const CLIENT_ID = 'rt-web';
+      const REDIRECT_URI = 'http://localhost:5173/';
+      const OIDC = `${SERVER}/realms/field/protocol/openid-connect`;
+
+      const $ = (id) => document.getElementById(id);
+      const log = (text) => ($('log').textContent += `${text}\n`);
+      const base64url = (bytes) =>
+        btoa(String.fromCharCode(...new Uint8Array(bytes)))
+          .replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+      let accessToken = '';
+
+      // Step 1: log in on the Keycloak page (authorization code + PKCE; no client secret).
+      $('login').onclick = async () => {
+        const verifier = base64url(crypto.getRandomValues(new Uint8Array(32)));
+        const state = base64url(crypto.getRandomValues(new Uint8Array(16)));
+        sessionStorage.setItem('rt-test-login', JSON.stringify({ verifier, state }));
+        const challenge = base64url(
+          await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)),
+        );
+        location.assign(`${OIDC}/auth?${new URLSearchParams({
+          client_id: CLIENT_ID, redirect_uri: REDIRECT_URI, response_type: 'code', scope: 'openid',
+          state, code_challenge: challenge, code_challenge_method: 'S256',
+        })}`);
+      };
+
+      // Back from Keycloak with ?code=…: exchange it for tokens (kept in memory only).
+      const back = new URLSearchParams(location.search);
+      if (back.has('code') || back.has('error')) {
+        const saved = JSON.parse(sessionStorage.getItem('rt-test-login') ?? '{}');
+        sessionStorage.removeItem('rt-test-login');
+        history.replaceState(null, '', REDIRECT_URI);
+        if (back.has('error') || back.get('state') !== saved.state) {
+          log(`Login failed: ${back.get('error') ?? 'state did not match'}`);
+        } else {
+          const response = await fetch(`${OIDC}/token`, {
+            method: 'POST',
+            body: new URLSearchParams({
+              grant_type: 'authorization_code', client_id: CLIENT_ID, code: back.get('code'),
+              redirect_uri: REDIRECT_URI, code_verifier: saved.verifier,
+            }),
+          });
+          const tokens = await response.json();
+          if (response.ok) {
+            accessToken = tokens.access_token;
+            $('send').disabled = false;
+            $('test').disabled = false;
+            log('Logged in.');
+          } else {
+            log(`Login failed: HTTP ${response.status} ${tokens.error ?? ''}`);
+          }
+        }
+      }
+
+      async function api(path, body) {
+        const response = await fetch(`${SERVER}${path}`, {
+          method: 'POST',
+          headers: { authorization: `Bearer ${accessToken}`, 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const json = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(`${path}: HTTP ${response.status} ${json.error ?? ''}`);
+        return json;
+      }
+
+      // Button 2: this browser's position (the browser asks for permission).
+      async function browserPoint() {
+        let position;
+        try {
+          position = await new Promise((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 20000 }),
+          );
+        } catch (error) {
+          throw new Error(
+            `this browser gave no location (${error.message}). Open the page in Chrome or Firefox, ` +
+              "not an editor's built-in browser, allow location and turn on the computer's location " +
+              'service. Or use button 3.',
+          );
+        }
+        const { coords, timestamp } = position;
+        log(`Location: ${coords.latitude.toFixed(6)}, ${coords.longitude.toFixed(6)} (±${Math.round(coords.accuracy)} m)`);
+        return {
+          seq: Date.now(), t: Math.round(timestamp),
+          lat: Number(coords.latitude.toFixed(6)), lon: Number(coords.longitude.toFixed(6)),
+          acc: Math.max(1, Math.round(coords.accuracy)), src: 'fused', mock: false,
+        };
+      }
+
+      // Button 3: a fixed point, marked as a mock location, to test the connection alone.
+      function testPoint() {
+        log('Test point: Santiago, Chile (stored as a mock location).');
+        return { seq: Date.now(), t: Date.now(), lat: -33.4489, lon: -70.6693, acc: 10, src: 'fused', mock: true };
+      }
+
+      async function sendPoint(point) {
+        // Step 2: register this browser once and keep its device id.
+        let deviceId = localStorage.getItem('rt-test-device');
+        if (!deviceId) {
+          try {
+            ({ id: deviceId } = await api('/v1/devices', { name: 'Browser test', appVersion: 'browser-test-1' }));
+          } catch (error) {
+            if (error.message.includes('409')) {
+              log('This account already has 3 devices (each browser counts as one). Remove one in the app or ask us.');
+            }
+            throw error;
+          }
+          localStorage.setItem('rt-test-device', deviceId);
+        }
+        log(`Device: ${deviceId}`);
+
+        // Step 3: a one-time ticket, valid 30 seconds (browsers cannot set headers on a
+        // WebSocket). Asked for after the location, so a slow permission prompt cannot expire it.
+        let ticket;
+        try {
+          ({ ticket } = await api('/v1/ws-tickets', { deviceId }));
+        } catch (error) {
+          localStorage.removeItem('rt-test-device'); // revoked or unknown: register again next time
+          throw error;
+        }
+
+        // Step 4: open the WebSocket with the ticket, send the point, wait for the answer.
+        const socket = new WebSocket(
+          `${SERVER.replace('https:', 'wss:')}/v1/ws?ticket=${encodeURIComponent(ticket)}`,
+          'rt.v1.json',
+        );
+        socket.onopen = () => {
+          socket.send(JSON.stringify({ v: 1, type: 'location.update', id: `test-${Date.now()}`, data: point }));
+          log('Sent. Waiting for the server…');
+        };
+        socket.onmessage = (event) => {
+          log(`Server: ${event.data}`);
+          const reply = JSON.parse(event.data);
+          if (reply.type === 'ack') {
+            log(reply.data.rejected?.length ? 'REFUSED (see "rejected" above).' : 'OK: location stored.');
+            socket.close(1000);
+          } else if (reply.type === 'error') {
+            log('ERROR from the server (see above).');
+            socket.close(1000);
+          }
+        };
+        socket.onclose = (event) => log(`WebSocket closed (${event.code}).`);
+      }
+
+      async function run(getPoint) {
+        try {
+          await sendPoint(await getPoint());
+        } catch (error) {
+          log(`ERROR: ${error.message ?? error}`);
+        }
+      }
+
+      $('send').onclick = () => run(browserPoint);
+      $('test').onclick = () => run(testPoint);
+    </script>
+  </body>
+</html>
+```
+
+A single HTML file, with no libraries, that goes through all four steps above: it logs in on the Keycloak page, registers the browser as a device, gets a ticket and sends one location over the WebSocket, then prints the server's `ack`.
+
+To try it:
+
+1. Save the page as `index.html`, then run `python3 -m http.server 5173 --bind 127.0.0.1` in that folder and open `http://localhost:5173/`.
+2. Press **1. Log in** and log in with your own account.
+3. Press **2. Send my location** (the browser asks for permission), or **3. Send a test point** to test the connection without a location. The test point is stored as a mock location.
+
+The page's origin `http://localhost:5173` and its redirect URI `http://localhost:5173/` must be on the list Thruxion allows for your website (see above). Without that the login or the ticket request is refused. Tokens stay in memory, and only the device ID is kept in local storage. To log in with a HumanAPI email and password instead of the Keycloak page, see [Log In with a HumanAPI Account](#log-in-with-a-humanapi-account).
 
 # Staff
 
