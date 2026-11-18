@@ -332,6 +332,11 @@
           </li>
           <li>
             <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#log-in-with-a-humanapi-account" class="toc-h2 toc-link" data-title="Log In with a HumanAPI Account">Log In with a HumanAPI Account</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#devices" class="toc-h1 toc-link" data-title="Devices">Devices</a>
@@ -391,6 +396,11 @@
           </li>
           <li>
             <a href="#websites" class="toc-h1 toc-link" data-title="Websites">Websites</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#complete-browser-example" class="toc-h2 toc-link" data-title="Complete Browser Example">Complete Browser Example</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#staff" class="toc-h1 toc-link" data-title="Staff">Staff</a>
@@ -417,6 +427,9 @@
               <ul class="toc-list-h2">
                   <li>
                     <a href="#rest-errors" class="toc-h2 toc-link" data-title="REST Errors">REST Errors</a>
+                  </li>
+                  <li>
+                    <a href="#login-errors" class="toc-h2 toc-link" data-title="Login Errors">Login Errors</a>
                   </li>
                   <li>
                     <a href="#websocket-error-codes" class="toc-h2 toc-link" data-title="WebSocket Error Codes">WebSocket Error Codes</a>
@@ -466,7 +479,14 @@
 <li>Device IDs are UUIDs. Times are epoch milliseconds inside WebSocket messages, and ISO 8601 (UTC) in REST responses, for example <code>2026-10-05T20:00:00.000Z</code>.</li>
 </ul>
 <h1 id='authentication'>Authentication</h1>
-<p>Access tokens come from Thruxion&#39;s Keycloak server, using OpenID Connect (authorization code flow with PKCE S256). The password is typed only on the Keycloak login page, never in your app or website.</p>
+<p>Access tokens come from Thruxion&#39;s Keycloak server, using OpenID Connect. There are two ways to log a user in on the public host:</p>
+
+<ul>
+<li><strong>Keycloak login page</strong> (authorization code flow with PKCE S256). The password is typed only on the Keycloak page, never in your app or website.</li>
+<li><strong>HumanAPI account</strong>: an app or website that has just logged its user in to Thruxion HumanAPI logs them in here with the same email and password, without a second login page. See <a href="#log-in-with-a-humanapi-account">Log In with a HumanAPI Account</a>.</li>
+</ul>
+
+<p>The staff dashboard only uses the first way.</p>
 
 <table><thead>
 <tr>
@@ -496,7 +516,7 @@
 </tr>
 </tbody></table>
 
-<p>The OpenID configuration of a realm is at <code>&lt;issuer&gt;/.well-known/openid-configuration</code>. All clients are public (there is no client secret) and the password grant is disabled, so use an OpenID Connect library such as AppAuth on Android or <code>oidc-client-ts</code> in a browser.</p>
+<p>The OpenID configuration of a realm is at <code>&lt;issuer&gt;/.well-known/openid-configuration</code>. All clients are public (there is no client secret). For the Keycloak login page use an OpenID Connect library such as AppAuth on Android or <code>oidc-client-ts</code> in a browser. The password grant is enabled only on <code>rt-android</code> and <code>rt-web</code> (for HumanAPI logins); it is disabled on the staff client <code>rt-dashboard</code>.</p>
 
 <p>Access tokens last <strong>5 minutes</strong>. Refresh them with the refresh token before they expire. A WebSocket can stay open much longer: see <a href="#keeping-a-connection-alive">Keeping a Connection Alive</a>.</p>
 
@@ -506,6 +526,173 @@ The examples on this page read the access token from <code>$TOKEN</code> (or <co
 
 <aside class="warning">
 Keep tokens in memory, never in local storage, cookies or URLs. Each refresh token works only once: if one is used twice, Keycloak ends the whole session.
+</aside>
+<h2 id='log-in-with-a-humanapi-account'>Log In with a HumanAPI Account</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST <span class="s2">"https://rt.thruxion.com/realms/field/protocol/openid-connect/token"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="nv">grant_type</span><span class="o">=</span>password <span class="se">\</span>
+  <span class="nt">-d</span> <span class="nv">client_id</span><span class="o">=</span>rt-android <span class="se">\</span>
+  <span class="nt">-d</span> <span class="nv">scope</span><span class="o">=</span><span class="s2">"openid offline_access"</span> <span class="se">\</span>
+  <span class="nt">--data-urlencode</span> <span class="s2">"username=app-thruxion:ana@example.com"</span> <span class="se">\</span>
+  <span class="nt">--data-urlencode</span> <span class="s2">"password=</span><span class="nv">$HUMANAPI_PASSWORD</span><span class="s2">"</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">(</span><span class="s1">'https://rt.thruxion.com/realms/field/protocol/openid-connect/token'</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="p">.</span><span class="nf">post_form</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span>
+  <span class="s1">'grant_type'</span> <span class="o">=&gt;</span> <span class="s1">'password'</span><span class="p">,</span>
+  <span class="s1">'client_id'</span>  <span class="o">=&gt;</span> <span class="s1">'rt-android'</span><span class="p">,</span>
+  <span class="s1">'scope'</span>      <span class="o">=&gt;</span> <span class="s1">'openid offline_access'</span><span class="p">,</span>
+  <span class="s1">'username'</span>   <span class="o">=&gt;</span> <span class="s1">'app-thruxion:ana@example.com'</span><span class="p">,</span>
+  <span class="s1">'password'</span>   <span class="o">=&gt;</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'HUMANAPI_PASSWORD'</span><span class="p">])</span>
+
+<span class="n">tokens</span> <span class="o">=</span> <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="nf">body</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">tokens</span><span class="p">[</span><span class="s1">'access_token'</span><span class="p">]</span> <span class="o">||</span> <span class="n">tokens</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"https://rt.thruxion.com/realms/field/protocol/openid-connect/token"</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"grant_type"</span><span class="p">:</span> <span class="s">"password"</span><span class="p">,</span>
+    <span class="s">"client_id"</span><span class="p">:</span> <span class="s">"rt-android"</span><span class="p">,</span>
+    <span class="s">"scope"</span><span class="p">:</span> <span class="s">"openid offline_access"</span><span class="p">,</span>
+    <span class="s">"username"</span><span class="p">:</span> <span class="s">"app-thruxion:ana@example.com"</span><span class="p">,</span>
+    <span class="s">"password"</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"HUMANAPI_PASSWORD"</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># form-encoded, not JSON
+</span><span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">login</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span>
+            <span class="dl">'</span><span class="s1">https://rt.thruxion.com/realms/field/protocol/openid-connect/token</span><span class="dl">'</span><span class="p">,</span>
+            <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">({</span>
+                <span class="na">grant_type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">password</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">client_id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">rt-web</span><span class="dl">'</span><span class="p">,</span>          <span class="c1">// 'rt-android' for the app</span>
+                <span class="na">scope</span><span class="p">:</span> <span class="dl">'</span><span class="s1">openid</span><span class="dl">'</span><span class="p">,</span>              <span class="c1">// 'openid offline_access' for the app</span>
+                <span class="na">username</span><span class="p">:</span> <span class="dl">'</span><span class="s1">app-thruxion:ana@example.com</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">password</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">HUMANAPI_PASSWORD</span><span class="p">,</span>
+            <span class="p">})</span>
+        <span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">access_token</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span> <span class="p">?</span> <span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">login</span><span class="p">();</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this (200; other standard OpenID fields are left out):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"access_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;access token&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"expires_in"</span><span class="p">:</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"refresh_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;refresh token&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"token_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bearer"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>A wrong email, platform or password, or an account that is not active in HumanAPI (400):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invalid_grant"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"error_description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Invalid user credentials"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>An app or website that has just logged its user in to Thruxion HumanAPI can log them in here too with the same email and password, without showing a second login page. The result is the same as after the Keycloak login page: an access token (5 minutes) and a refresh token. Everything else in this documentation works unchanged: registering a device, tickets, the WebSocket and <a href="#keeping-a-connection-alive">token refresh</a>.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code>POST https://rt.thruxion.com/realms/field/protocol/openid-connect/token</code></p>
+
+<p>Send the body as <code>application/x-www-form-urlencoded</code>, not JSON.</p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>grant_type</td>
+<td>yes</td>
+<td>Always <code>password</code>.</td>
+</tr>
+<tr>
+<td>client_id</td>
+<td>yes</td>
+<td><code>rt-android</code> for the app, <code>rt-web</code> for a website.</td>
+</tr>
+<tr>
+<td>username</td>
+<td>yes</td>
+<td>The account&#39;s email, or <code>platform:email</code> (see below).</td>
+</tr>
+<tr>
+<td>password</td>
+<td>yes</td>
+<td>The HumanAPI password.</td>
+</tr>
+<tr>
+<td>scope</td>
+<td>no</td>
+<td><code>openid offline_access</code> for the app, <code>openid</code> for a website.</td>
+</tr>
+</tbody></table>
+<h3 id='username'>Username</h3>
+<p>HumanAPI accounts are unique per email <strong>and</strong> platform, so the username can name both. Case does not matter.</p>
+
+<table><thead>
+<tr>
+<th>You send</th>
+<th>Account used</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>ana@example.com</code></td>
+<td>The Thruxion account (<code>app-thruxion</code>). If there is none, the email&#39;s only active account on any platform. An email with several accounts and none on <code>app-thruxion</code> must use <code>platform:email</code>.</td>
+</tr>
+<tr>
+<td><code>app-thruxion:ana@example.com</code></td>
+<td>Exactly that platform&#39;s account.</td>
+</tr>
+<tr>
+<td><code>:ana@example.com</code></td>
+<td>The account that has no platform.</td>
+</tr>
+</tbody></table>
+
+<p>The same usernames work on the Keycloak login page.</p>
+<h3 id='errors'>Errors</h3>
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Error</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td><code>invalid_grant</code></td>
+<td>Wrong email, platform or password, or the account is not active in HumanAPI. Fall back to the Keycloak login page, where the same usernames work.</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>invalid_grant</code></td>
+<td>After 10 wrong passwords in a row, or 2 within one second, the account is locked for a while. The answer can look the same as a wrong password, so stop retrying.</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+Send the password only in this request, right after the HumanAPI login, and never store it. Afterwards use the refresh token like with any other login.
+</aside>
+
+<aside class="notice">
+HumanAPI's own tokens (<code>/auth/system-login</code>) are not accepted here: one system token is shared by every caller, so it says nothing about who is sending.
+</aside>
+
+<aside class="notice">
+If the account is disabled in HumanAPI, its next token refresh fails and its open WebSocket closes within 5 minutes (<code>4001</code>). Log in again after the account is enabled.
 </aside>
 <h1 id='devices'>Devices</h1>
 <p>Before it can connect, a phone or browser registers itself as a device. A user can have up to <strong>3</strong> active devices. These endpoints are on the public host and need a token from the <code>field</code> realm with the <code>tracker</code> role.</p>
@@ -570,9 +757,9 @@ Keep tokens in memory, never in local storage, cookies or URLs. Each refresh tok
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Registers the phone or browser that makes the request. Keep the returned <code>id</code>: it is the <code>X-Device-Id</code> the phone sends when it connects, and the <code>deviceId</code> a website asks a ticket for. Register once per installation, not on every start.</p>
-<h3 id='http-request'>HTTP Request</h3>
+<h3 id='http-request-2'>HTTP Request</h3>
 <p><code>POST https://rt.thruxion.com/v1/devices</code></p>
-<h3 id='parameters'>Parameters</h3>
+<h3 id='parameters-2'>Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -683,7 +870,7 @@ Registration is limited to 5 requests per minute per user. Over that, the API an
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Returns the devices of the logged-in user. Each device has the fields described in <a href="#register-device">Register Device</a>.</p>
-<h3 id='http-request-2'>HTTP Request</h3>
+<h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://rt.thruxion.com/v1/devices</code></p>
 <h2 id='revoke-my-device'>Revoke My Device</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'net/http'</span>
 
@@ -725,7 +912,7 @@ Registration is limited to 5 requests per minute per user. Over that, the API an
 </blockquote>
 
 <p>Revokes one of the user&#39;s own devices, for example a lost phone. Its open WebSocket closes with code <code>4003</code>, and it can no longer connect. A revoked device no longer counts towards the limit of 3.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
+<h3 id='http-request-4'>HTTP Request</h3>
 <p><code>DELETE https://rt.thruxion.com/v1/devices/&lt;ID&gt;</code></p>
 <h3 id='url-parameters'>URL Parameters</h3>
 <table><thead>
@@ -784,9 +971,9 @@ Registration is limited to 5 requests per minute per user. Over that, the API an
 <p>Browsers cannot set headers on a WebSocket, so a website exchanges its access token for a one-time ticket and puts the ticket in the WebSocket URL instead (see <a href="#websites">Websites</a>). Phones do not need tickets.</p>
 
 <p>Each ticket works <strong>once</strong>, within <strong>30 seconds</strong>, for that one device. Get a new ticket for every connection.</p>
-<h3 id='http-request-4'>HTTP Request</h3>
+<h3 id='http-request-5'>HTTP Request</h3>
 <p><code>POST https://rt.thruxion.com/v1/ws-tickets</code></p>
-<h3 id='parameters-2'>Parameters</h3>
+<h3 id='parameters-3'>Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1176,7 +1363,7 @@ Never send user or device IDs in a point: the server takes them from the connect
 <li>The server answers <code>ack</code> with the new <code>expiresAt</code>, or <code>error</code> with <code>auth_failed</code> (an invalid token, or a token for another user).</li>
 </ol>
 
-<p>Without a refresh, the connection closes with <code>4001</code> when the token expires.</p>
+<p>Without a refresh, the connection closes with <code>4001</code> when the token expires. For a HumanAPI login this also happens when the account is disabled in HumanAPI: Keycloak refuses its next refresh, so the connection ends within 5 minutes.</p>
 
 <p>The server also closes connections with <code>4003</code> when the device is revoked, or when the Keycloak session ends (the user logs out, or an admin ends the session). This happens on every server at once, within about a second.</p>
 <h1 id='websites'>Websites</h1><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// In a web page. See "Get WebSocket Ticket" for getTicket().</span>
@@ -1218,7 +1405,7 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="nt">-H</span
 <p>Browsers cannot set headers on a WebSocket, so a page uses a one-time ticket instead of <code>Authorization</code> and <code>X-Device-Id</code>:</p>
 
 <ol>
-<li>Log in with the realm <code>field</code>, client <code>rt-web</code> (see <a href="#authentication">Authentication</a>).</li>
+<li>Log in with the realm <code>field</code>, client <code>rt-web</code> (see <a href="#authentication">Authentication</a>). A website that has already logged its user in to HumanAPI can use the same email and password directly with <code>scope=openid</code>: see <a href="#log-in-with-a-humanapi-account">Log In with a HumanAPI Account</a>.</li>
 <li>Register the browser once with <a href="#register-device">Register Device</a>, and keep its <code>id</code> in local storage.</li>
 <li>Get a ticket with <a href="#get-websocket-ticket">Get WebSocket Ticket</a>.</li>
 <li>Open <code>wss://rt.thruxion.com/v1/ws?ticket=&lt;ticket&gt;</code>, offering the subprotocol <code>rt.v1.json</code>.</li>
@@ -1237,6 +1424,194 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="nt">-H</span
 <aside class="warning">
 Keep tokens in memory, never in local storage, cookies or URLs, and refresh them one at a time. Tokens carry no name or email.
 </aside>
+<h2 id='complete-browser-example'>Complete Browser Example</h2><div class="highlight"><pre class="highlight html tab-html"><code><span class="cp">&lt;!doctype html&gt;</span>
+<span class="c">&lt;!--
+  Minimal browser test: log in on the Keycloak page, then send a location over the
+  WebSocket and print the server's answer. No libraries needed.
+  Serve it with:  python3 -m http.server 5173 --bind 127.0.0.1
+  and open http://localhost:5173/
+--&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title&gt;</span>RT browser test<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body</span> <span class="na">style=</span><span class="s">"font-family: system-ui, sans-serif; max-width: 640px; margin: 24px auto; padding: 0 16px"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>RT browser test<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"login"</span> <span class="na">type=</span><span class="s">"button"</span><span class="nt">&gt;</span>1. Log in<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"send"</span> <span class="na">type=</span><span class="s">"button"</span> <span class="na">disabled</span><span class="nt">&gt;</span>2. Send my location<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"test"</span> <span class="na">type=</span><span class="s">"button"</span> <span class="na">disabled</span><span class="nt">&gt;</span>3. Send a test point (no location needed)<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;pre</span> <span class="na">id=</span><span class="s">"log"</span> <span class="na">style=</span><span class="s">"background: #f3f4f6; padding: 12px; white-space: pre-wrap"</span><span class="nt">&gt;&lt;/pre&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"module"</span><span class="nt">&gt;</span>
+      <span class="kd">const</span> <span class="nx">SERVER</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">https://rt.thruxion.com</span><span class="dl">'</span><span class="p">;</span>
+      <span class="kd">const</span> <span class="nx">CLIENT_ID</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">rt-web</span><span class="dl">'</span><span class="p">;</span>
+      <span class="kd">const</span> <span class="nx">REDIRECT_URI</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">http://localhost:5173/</span><span class="dl">'</span><span class="p">;</span>
+      <span class="kd">const</span> <span class="nx">OIDC</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">SERVER</span><span class="p">}</span><span class="s2">/realms/field/protocol/openid-connect`</span><span class="p">;</span>
+
+      <span class="kd">const</span> <span class="nx">$</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+      <span class="kd">const</span> <span class="nx">log</span> <span class="o">=</span> <span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">log</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">+=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">text</span><span class="p">}</span><span class="s2">\n`</span><span class="p">);</span>
+      <span class="kd">const</span> <span class="nx">base64url</span> <span class="o">=</span> <span class="p">(</span><span class="nx">bytes</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="nx">btoa</span><span class="p">(</span><span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(...</span><span class="k">new</span> <span class="nb">Uint8Array</span><span class="p">(</span><span class="nx">bytes</span><span class="p">)))</span>
+          <span class="p">.</span><span class="nx">replaceAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">+</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span><span class="p">).</span><span class="nx">replaceAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">_</span><span class="dl">'</span><span class="p">).</span><span class="nx">replaceAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">=</span><span class="dl">'</span><span class="p">,</span> <span class="dl">''</span><span class="p">);</span>
+      <span class="kd">let</span> <span class="nx">accessToken</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
+
+      <span class="c1">// Step 1: log in on the Keycloak page (authorization code + PKCE; no client secret).</span>
+      <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">login</span><span class="dl">'</span><span class="p">).</span><span class="nx">onclick</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">verifier</span> <span class="o">=</span> <span class="nx">base64url</span><span class="p">(</span><span class="nx">crypto</span><span class="p">.</span><span class="nx">getRandomValues</span><span class="p">(</span><span class="k">new</span> <span class="nb">Uint8Array</span><span class="p">(</span><span class="mi">32</span><span class="p">)));</span>
+        <span class="kd">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">base64url</span><span class="p">(</span><span class="nx">crypto</span><span class="p">.</span><span class="nx">getRandomValues</span><span class="p">(</span><span class="k">new</span> <span class="nb">Uint8Array</span><span class="p">(</span><span class="mi">16</span><span class="p">)));</span>
+        <span class="nx">sessionStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">rt-test-login</span><span class="dl">'</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span> <span class="nx">verifier</span><span class="p">,</span> <span class="nx">state</span> <span class="p">}));</span>
+        <span class="kd">const</span> <span class="nx">challenge</span> <span class="o">=</span> <span class="nx">base64url</span><span class="p">(</span>
+          <span class="k">await</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">subtle</span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="dl">'</span><span class="s1">SHA-256</span><span class="dl">'</span><span class="p">,</span> <span class="k">new</span> <span class="nx">TextEncoder</span><span class="p">().</span><span class="nx">encode</span><span class="p">(</span><span class="nx">verifier</span><span class="p">)),</span>
+        <span class="p">);</span>
+        <span class="nx">location</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">OIDC</span><span class="p">}</span><span class="s2">/auth?</span><span class="p">${</span><span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">({</span>
+          <span class="na">client_id</span><span class="p">:</span> <span class="nx">CLIENT_ID</span><span class="p">,</span> <span class="na">redirect_uri</span><span class="p">:</span> <span class="nx">REDIRECT_URI</span><span class="p">,</span> <span class="na">response_type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">code</span><span class="dl">'</span><span class="p">,</span> <span class="na">scope</span><span class="p">:</span> <span class="dl">'</span><span class="s1">openid</span><span class="dl">'</span><span class="p">,</span>
+          <span class="nx">state</span><span class="p">,</span> <span class="na">code_challenge</span><span class="p">:</span> <span class="nx">challenge</span><span class="p">,</span> <span class="na">code_challenge_method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">S256</span><span class="dl">'</span><span class="p">,</span>
+        <span class="p">})}</span><span class="s2">`</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="c1">// Back from Keycloak with ?code=…: exchange it for tokens (kept in memory only).</span>
+      <span class="kd">const</span> <span class="nx">back</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">search</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">back</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="dl">'</span><span class="s1">code</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="nx">back</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="dl">'</span><span class="s1">error</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">saved</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">sessionStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">rt-test-login</span><span class="dl">'</span><span class="p">)</span> <span class="o">??</span> <span class="dl">'</span><span class="s1">{}</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">sessionStorage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">rt-test-login</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">history</span><span class="p">.</span><span class="nx">replaceState</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="dl">''</span><span class="p">,</span> <span class="nx">REDIRECT_URI</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">back</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="dl">'</span><span class="s1">error</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="nx">back</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">state</span><span class="dl">'</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">saved</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">log</span><span class="p">(</span><span class="s2">`Login failed: </span><span class="p">${</span><span class="nx">back</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">error</span><span class="dl">'</span><span class="p">)</span> <span class="o">??</span> <span class="dl">'</span><span class="s1">state did not match</span><span class="dl">'</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">OIDC</span><span class="p">}</span><span class="s2">/token`</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">body</span><span class="p">:</span> <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">({</span>
+              <span class="na">grant_type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">authorization_code</span><span class="dl">'</span><span class="p">,</span> <span class="na">client_id</span><span class="p">:</span> <span class="nx">CLIENT_ID</span><span class="p">,</span> <span class="na">code</span><span class="p">:</span> <span class="nx">back</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">code</span><span class="dl">'</span><span class="p">),</span>
+              <span class="na">redirect_uri</span><span class="p">:</span> <span class="nx">REDIRECT_URI</span><span class="p">,</span> <span class="na">code_verifier</span><span class="p">:</span> <span class="nx">saved</span><span class="p">.</span><span class="nx">verifier</span><span class="p">,</span>
+            <span class="p">}),</span>
+          <span class="p">});</span>
+          <span class="kd">const</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">accessToken</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">access_token</span><span class="p">;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">send</span><span class="dl">'</span><span class="p">).</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">test</span><span class="dl">'</span><span class="p">).</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Logged in.</span><span class="dl">'</span><span class="p">);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">(</span><span class="s2">`Login failed: HTTP </span><span class="p">${</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">error</span> <span class="o">??</span> <span class="dl">''</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="k">async</span> <span class="kd">function</span> <span class="nx">api</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">SERVER</span><span class="p">}${</span><span class="nx">path</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span>
+          <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+          <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="na">authorization</span><span class="p">:</span> <span class="s2">`Bearer </span><span class="p">${</span><span class="nx">accessToken</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="dl">'</span><span class="s1">content-type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span> <span class="p">},</span>
+          <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">body</span><span class="p">),</span>
+        <span class="p">});</span>
+        <span class="kd">const</span> <span class="nx">json</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="k">catch</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">({}));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">path</span><span class="p">}</span><span class="s2">: HTTP </span><span class="p">${</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="nx">json</span><span class="p">.</span><span class="nx">error</span> <span class="o">??</span> <span class="dl">''</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">json</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="c1">// Button 2: this browser's position (the browser asks for permission).</span>
+      <span class="k">async</span> <span class="kd">function</span> <span class="nx">browserPoint</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">position</span><span class="p">;</span>
+        <span class="k">try</span> <span class="p">{</span>
+          <span class="nx">position</span> <span class="o">=</span> <span class="k">await</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span>
+            <span class="nb">navigator</span><span class="p">.</span><span class="nx">geolocation</span><span class="p">.</span><span class="nx">getCurrentPosition</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">,</span> <span class="p">{</span> <span class="na">enableHighAccuracy</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="na">timeout</span><span class="p">:</span> <span class="mi">20000</span> <span class="p">}),</span>
+          <span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
+            <span class="s2">`this browser gave no location (</span><span class="p">${</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span><span class="s2">). Open the page in Chrome or Firefox, `</span> <span class="o">+</span>
+              <span class="dl">"</span><span class="s2">not an editor's built-in browser, allow location and turn on the computer's location </span><span class="dl">"</span> <span class="o">+</span>
+              <span class="dl">'</span><span class="s1">service. Or use button 3.</span><span class="dl">'</span><span class="p">,</span>
+          <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kd">const</span> <span class="p">{</span> <span class="nx">coords</span><span class="p">,</span> <span class="nx">timestamp</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">position</span><span class="p">;</span>
+        <span class="nx">log</span><span class="p">(</span><span class="s2">`Location: </span><span class="p">${</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">6</span><span class="p">)}</span><span class="s2">, </span><span class="p">${</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">6</span><span class="p">)}</span><span class="s2"> (±</span><span class="p">${</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">coords</span><span class="p">.</span><span class="nx">accuracy</span><span class="p">)}</span><span class="s2"> m)`</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">{</span>
+          <span class="na">seq</span><span class="p">:</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">(),</span> <span class="na">t</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">timestamp</span><span class="p">),</span>
+          <span class="na">lat</span><span class="p">:</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">6</span><span class="p">)),</span> <span class="na">lon</span><span class="p">:</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">6</span><span class="p">)),</span>
+          <span class="na">acc</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">coords</span><span class="p">.</span><span class="nx">accuracy</span><span class="p">)),</span> <span class="na">src</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fused</span><span class="dl">'</span><span class="p">,</span> <span class="na">mock</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="p">};</span>
+      <span class="p">}</span>
+
+      <span class="c1">// Button 3: a fixed point, marked as a mock location, to test the connection alone.</span>
+      <span class="kd">function</span> <span class="nx">testPoint</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Test point: Santiago, Chile (stored as a mock location).</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="na">seq</span><span class="p">:</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">(),</span> <span class="na">t</span><span class="p">:</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">(),</span> <span class="na">lat</span><span class="p">:</span> <span class="o">-</span><span class="mf">33.4489</span><span class="p">,</span> <span class="na">lon</span><span class="p">:</span> <span class="o">-</span><span class="mf">70.6693</span><span class="p">,</span> <span class="na">acc</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="na">src</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fused</span><span class="dl">'</span><span class="p">,</span> <span class="na">mock</span><span class="p">:</span> <span class="kc">true</span> <span class="p">};</span>
+      <span class="p">}</span>
+
+      <span class="k">async</span> <span class="kd">function</span> <span class="nx">sendPoint</span><span class="p">(</span><span class="nx">point</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Step 2: register this browser once and keep its device id.</span>
+        <span class="kd">let</span> <span class="nx">deviceId</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">rt-test-device</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">deviceId</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="p">({</span> <span class="na">id</span><span class="p">:</span> <span class="nx">deviceId</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">api</span><span class="p">(</span><span class="dl">'</span><span class="s1">/v1/devices</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Browser test</span><span class="dl">'</span><span class="p">,</span> <span class="na">appVersion</span><span class="p">:</span> <span class="dl">'</span><span class="s1">browser-test-1</span><span class="dl">'</span> <span class="p">}));</span>
+          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="dl">'</span><span class="s1">409</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+              <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">This account already has 3 devices (each browser counts as one). Remove one in the app or ask us.</span><span class="dl">'</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">throw</span> <span class="nx">error</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">rt-test-device</span><span class="dl">'</span><span class="p">,</span> <span class="nx">deviceId</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">log</span><span class="p">(</span><span class="s2">`Device: </span><span class="p">${</span><span class="nx">deviceId</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+
+        <span class="c1">// Step 3: a one-time ticket, valid 30 seconds (browsers cannot set headers on a</span>
+        <span class="c1">// WebSocket). Asked for after the location, so a slow permission prompt cannot expire it.</span>
+        <span class="kd">let</span> <span class="nx">ticket</span><span class="p">;</span>
+        <span class="k">try</span> <span class="p">{</span>
+          <span class="p">({</span> <span class="nx">ticket</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">api</span><span class="p">(</span><span class="dl">'</span><span class="s1">/v1/ws-tickets</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">deviceId</span> <span class="p">}));</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">localStorage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">rt-test-device</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// revoked or unknown: register again next time</span>
+          <span class="k">throw</span> <span class="nx">error</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Step 4: open the WebSocket with the ticket, send the point, wait for the answer.</span>
+        <span class="kd">const</span> <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span>
+          <span class="s2">`</span><span class="p">${</span><span class="nx">SERVER</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">https:</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wss:</span><span class="dl">'</span><span class="p">)}</span><span class="s2">/v1/ws?ticket=</span><span class="p">${</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">ticket</span><span class="p">)}</span><span class="s2">`</span><span class="p">,</span>
+          <span class="dl">'</span><span class="s1">rt.v1.json</span><span class="dl">'</span><span class="p">,</span>
+        <span class="p">);</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">onopen</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span> <span class="na">v</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">location.update</span><span class="dl">'</span><span class="p">,</span> <span class="na">id</span><span class="p">:</span> <span class="s2">`test-</span><span class="p">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()}</span><span class="s2">`</span><span class="p">,</span> <span class="na">data</span><span class="p">:</span> <span class="nx">point</span> <span class="p">}));</span>
+          <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Sent. Waiting for the server…</span><span class="dl">'</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">log</span><span class="p">(</span><span class="s2">`Server: </span><span class="p">${</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+          <span class="kd">const</span> <span class="nx">reply</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">reply</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">ack</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">(</span><span class="nx">reply</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">rejected</span><span class="p">?.</span><span class="nx">length</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">REFUSED (see "rejected" above).</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">'</span><span class="s1">OK: location stored.</span><span class="dl">'</span><span class="p">);</span>
+            <span class="nx">socket</span><span class="p">.</span><span class="nx">close</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">reply</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">error</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">ERROR from the server (see above).</span><span class="dl">'</span><span class="p">);</span>
+            <span class="nx">socket</span><span class="p">.</span><span class="nx">close</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">onclose</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">log</span><span class="p">(</span><span class="s2">`WebSocket closed (</span><span class="p">${</span><span class="nx">event</span><span class="p">.</span><span class="nx">code</span><span class="p">}</span><span class="s2">).`</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="k">async</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">(</span><span class="nx">getPoint</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+          <span class="k">await</span> <span class="nx">sendPoint</span><span class="p">(</span><span class="k">await</span> <span class="nx">getPoint</span><span class="p">());</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">log</span><span class="p">(</span><span class="s2">`ERROR: </span><span class="p">${</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span> <span class="o">??</span> <span class="nx">error</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">send</span><span class="dl">'</span><span class="p">).</span><span class="nx">onclick</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">run</span><span class="p">(</span><span class="nx">browserPoint</span><span class="p">);</span>
+      <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">test</span><span class="dl">'</span><span class="p">).</span><span class="nx">onclick</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">run</span><span class="p">(</span><span class="nx">testPoint</span><span class="p">);</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div>
+<p>A single HTML file, with no libraries, that goes through all four steps above: it logs in on the Keycloak page, registers the browser as a device, gets a ticket and sends one location over the WebSocket, then prints the server&#39;s <code>ack</code>.</p>
+
+<p>To try it:</p>
+
+<ol>
+<li>Save the page as <code>index.html</code>, then run <code>python3 -m http.server 5173 --bind 127.0.0.1</code> in that folder and open <code>http://localhost:5173/</code>.</li>
+<li>Press <strong>1. Log in</strong> and log in with your own account.</li>
+<li>Press <strong>2. Send my location</strong> (the browser asks for permission), or <strong>3. Send a test point</strong> to test the connection without a location. The test point is stored as a mock location.</li>
+</ol>
+
+<p>The page&#39;s origin <code>http://localhost:5173</code> and its redirect URI <code>http://localhost:5173/</code> must be on the list Thruxion allows for your website (see above). Without that the login or the ticket request is refused. Tokens stay in memory, and only the device ID is kept in local storage. To log in with a HumanAPI email and password instead of the Keycloak page, see <a href="#log-in-with-a-humanapi-account">Log In with a HumanAPI Account</a>.</p>
 <h1 id='staff'>Staff</h1>
 <aside class="warning">
 The staff side is private. It runs on a separate staff host that is reachable only from the office or the VPN, and needs a token from the realm <code>staff</code>. Requests from a browser must come from the staff dashboard's origin. <code>&lt;staff host&gt;</code> below stands for that host.
@@ -1484,7 +1859,7 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="s2">"wss://&
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Returns every device, ordered by ID. Role: <code>developer</code> or <code>admin</code>. Besides the fields described in <a href="#register-device">Register Device</a>, each device has <code>ownerSub</code>, the Keycloak user ID of its owner.</p>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://&lt;staff host&gt;/v1/devices?limit=&lt;LIMIT&gt;&amp;after=&lt;AFTER&gt;</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
@@ -1571,9 +1946,9 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="s2">"wss://&
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Returns a device&#39;s stored points as a GeoJSON <code>FeatureCollection</code>, oldest first. Role: <code>developer</code> or <code>admin</code>. Coordinates are <code>[longitude, latitude]</code>, as GeoJSON requires. Each request is recorded in the audit log (who, which device, which range).</p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET https://&lt;staff host&gt;/v1/devices/&lt;ID&gt;/locations?from=&lt;FROM&gt;&amp;to=&lt;TO&gt;&amp;limit=&lt;LIMIT&gt;</code></p>
-<h3 id='parameters-3'>Parameters</h3>
+<h3 id='parameters-4'>Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1641,7 +2016,7 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="s2">"wss://&
 </blockquote>
 
 <p>Revokes any device. Role: <code>admin</code>. Its WebSocket closes everywhere with code <code>4003</code>, and it can no longer connect. The action is recorded in the audit log.</p>
-<h3 id='http-request-7'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>POST https://&lt;staff host&gt;/v1/devices/&lt;ID&gt;/revoke</code></p>
 <h3 id='url-parameters-2'>URL Parameters</h3>
 <table><thead>
@@ -1707,7 +2082,7 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="s2">"wss://&
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Returns the audit log, newest first. Role: <code>admin</code>. Reading the log is itself recorded.</p>
-<h3 id='http-request-8'>HTTP Request</h3>
+<h3 id='http-request-9'>HTTP Request</h3>
 <p><code>GET https://&lt;staff host&gt;/v1/audit?limit=&lt;LIMIT&gt;&amp;before=&lt;BEFORE&gt;</code></p>
 <h3 id='query-parameters-2'>Query Parameters</h3>
 <table><thead>
@@ -1837,6 +2212,22 @@ websocat <span class="nt">--protocol</span> rt.v1.json <span class="s2">"wss://&
 <td>500</td>
 <td><code>internal</code></td>
 <td>Server problem. Try again later.</td>
+</tr>
+</tbody></table>
+<h2 id='login-errors'>Login Errors</h2>
+<p>The <a href="#log-in-with-a-humanapi-account">HumanAPI login</a> is answered by Keycloak, not by the REST API, so its errors use the OAuth format (<code>error</code> and <code>error_description</code>).</p>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Error</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td><code>invalid_grant</code></td>
+<td>Wrong email, platform or password, an account that is not active in HumanAPI, or an account locked after repeated wrong passwords. Use the Keycloak login page instead.</td>
 </tr>
 </tbody></table>
 <h2 id='websocket-error-codes'>WebSocket Error Codes</h2>
